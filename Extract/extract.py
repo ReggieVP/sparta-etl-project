@@ -33,7 +33,7 @@ class Extract:
             print("No objects found in the specified prefix.")
 
         business_df['Date'] = date_list[:len(business_df)]  # Assign dates to rows in business_df
-        print(business_df)
+        return business_df
 
     # Other functions perform similar operations for different object types (e.g., 'Data', 'Engineering')
 
@@ -56,7 +56,7 @@ class Extract:
 
                     json_files_df = pd.concat([json_files_df, json_df])
 
-        print(json_files_df)
+        return json_files_df
 
     # The following functions are for different object types and seem to follow a similar pattern for extraction
 
@@ -77,7 +77,7 @@ class Extract:
         else:
             print("No objects found in the specified prefix.")
 
-        print(applicants_df)
+        return applicants_df
 
     def calling_bucket_txt(self):
         """
@@ -107,7 +107,7 @@ class Extract:
                     txt_df["Date"] = pd.to_datetime(txt_df["Date"])
                     text_df = pd.concat([text_df, txt_df])
 
-        print(text_df)
+        return text_df
 
 
 
