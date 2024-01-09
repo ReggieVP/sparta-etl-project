@@ -1,4 +1,4 @@
-# Must import boto3, json  and pandas as pd before you  can call this class
+# Must import boto3, json  and pandas as pd before you  can call this class.
 
 
 class Extract:
