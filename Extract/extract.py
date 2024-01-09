@@ -1,6 +1,5 @@
 import boto3
 import pandas as pd
-import io
 import json
 
 
@@ -34,7 +33,7 @@ class Extract:
         print(business_df)
 
     def calling_bucket_data(self):
-        Data_df = pd.DataFrame()
+        data_df = pd.DataFrame()
         date_list = []  # Store individual date values in a list
         response = self.s3_client.list_objects_v2(Bucket=self.bucket_name, Prefix='Academy/')
         if 'Contents' in response:
@@ -45,18 +44,18 @@ class Extract:
                     da_df = pd.read_csv(obj_content['Body'])
                     date = obj_key.split("_", 1)[1]
                     date = date.split(".")[0]
-                    Data_df['Date'] = date
+                    data_df['Date'] = date
                     date_list += [date] * len(da_df)  # Replicate date for each row in bus_df
-                    Data_df = pd.concat([Data_df, da_df])
+                    data_df = pd.concat([data_df, da_df])
 
         else:
             print("No objects found in the specified prefix.")
 
-        Data_df['Date'] = date_list[:len(Data_df)]
-        print(Data_df)
+        data_df['Date'] = date_list[:len(data_df)]
+        print(data_df)
 
-    def calling_bucket_Engineering(self):
-        Engineering_df = pd.DataFrame()
+    def calling_bucket_engineering(self):
+        engineering_df = pd.DataFrame()
         date_list = []
         response = self.s3_client.list_objects_v2(Bucket=self.bucket_name, Prefix='Academy/')
         if 'Contents' in response:
@@ -64,16 +63,16 @@ class Extract:
                 if 'Engineering' in obj['Key']:  # Check if 'Business' is in the object key
                     obj_key = obj['Key']
                     obj_content = self.s3_client.get_object(Bucket=self.bucket_name, Key=obj_key)
-                    Engineer_df = pd.read_csv(obj_content['Body'])
+                    engineer_df = pd.read_csv(obj_content['Body'])
                     date = obj_key.split("_", 1)[1]
                     date = date.split(".")[0]
-                    date_list += [date] * len(Engineer_df)
-                    Engineering_df = pd.concat([Engineering_df, Engineer_df])
+                    date_list += [date] * len(engineer_df)
+                    engineering_df = pd.concat([engineering_df, engineer_df])
 
         else:
             print("No objects found in the specified prefix.")
-        Engineering_df['Date'] = date_list[:len(Engineering_df)]
-        print(Engineering_df)
+        engineering_df['Date'] = date_list[:len(engineering_df)]
+        print(engineering_df)
 
     def calling_bucket_json(self):
         json_files_df = pd.DataFrame()
@@ -136,7 +135,7 @@ class Extract:
 
 instance1 = Extract()
 instance1.calling_bucket_business()
-instance1.calling_bucket_Engineering()
+instance1.calling_bucket_engineering()
 instance1.calling_bucket_data()
 instance1.calling_bucket_json()
 instance1.calling_bucket_applicants()
