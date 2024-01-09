@@ -18,7 +18,6 @@ class Extract:
         response = self.s3_client.list_objects_v2(Bucket=self.bucket_name, Prefix='Academy/')
         if 'Contents' in response:
             for obj in response['Contents']:
-                print(obj['Key'])
                 if 'Business' in obj['Key']:  # Check if 'Business' is in the object key
                     obj_key = obj['Key']
                     obj_content = self.s3_client.get_object(Bucket=self.bucket_name, Key=obj_key)
@@ -96,28 +95,52 @@ class Extract:
 
     def calling_bucket_applicants(self):
         applicants_df = pd.DataFrame()
-        date_list = []  # Store individual date values in a list
         for page in self.paginator.paginate(Bucket=self.bucket_name):
             for obj in page['Contents']:
-                print(obj['Key'])
                 if 'Applicants' in obj['Key']:  # Check if 'Business' is in the object key
                     obj_key = obj['Key']
                     obj_content = self.s3_client.get_object(Bucket=self.bucket_name, Key=obj_key)
                     appli_df = pd.read_csv(obj_content['Body'])
-                    date = obj_key.split("9", 1)[0]
-                    date_list += [date] * len(appli_df)  # Replicate date for each row in bus_df
                     applicants_df = pd.concat([applicants_df, appli_df])
 
         else:
             print("No objects found in the specified prefix.")
 
-        applicants_df['Date'] = date_list[:len(applicants_df)]  # Assign dates to rows in business_df
         print(applicants_df)
+
+    def calling_bucket_txt(self):
+        text_df = pd.DataFrame()
+        for page in self.paginator.paginate(Bucket=self.bucket_name):
+            for obj in page['Contents']:
+                if '.txt' in obj['Key']:
+                    obj_key = obj['Key']
+                    s3_objects = self.s3_client.get_object(Bucket=self.bucket_name, Key='Talent/Sparta Day 16 January 2019.txt')
+                    txt_df = pd.read_csv(s3_objects['Body'], sep='\t')
+
+                    name = ((txt_df.columns[0]))
+                    txt_df = txt_df.drop([0])
+                    txt_df = pd.DataFrame(txt_df.iloc[:, 0].str.replace("-", ","))
+                    txt_df= pd.DataFrame(txt_df.iloc[:, 0].str.split(",").tolist(),columns=["Name", "Psychometrics", "Presentation"])
+                    txt_df.insert(3, "Date", name)
+                    txt_df["Psychometrics"] = txt_df["Psychometrics"].str[17:19]
+                    txt_df["Presentation"] = txt_df["Presentation"].str[15:17]
+                    txt_df["Name"] = txt_df["Name"].str.upper().str.title()
+                    txt_df["Date"] = txt_df["Date"]
+                    txt_df["Date"] = pd.to_datetime(txt_df["Date"])
+                    text_df = pd.concat([text_df, txt_df])
+
+        print(text_df)
+
+
 
 
 instance1 = Extract()
+instance1.calling_bucket_business()
+instance1.calling_bucket_Engineering()
+instance1.calling_bucket_data()
 instance1.calling_bucket_json()
-
+instance1.calling_bucket_applicants()
+instance1.calling_bucket_txt()
 
 
 
