@@ -13,7 +13,7 @@ class Transform(Extract):
         clean_txt_df = clean_txt_df.drop_duplicates()
         clean_txt_df = clean_txt_df.reset_index()
         clean_txt_df = clean_txt_df.drop(columns= ["index"])
-        clean_txt_df["Presentation"] = round(clean_txt_df["Presentation"].astype(int)*100/32,0).astype(int)
+        clean_txt_df["Presentation"] = round(clean_txt_df["Presentation"].astype(int)*100/32, 0).astype(int)
         clean_txt_df = clean_txt_df.rename(columns={"Psychometrics": "Psychometrics(%)", "Presentation": "Presentation(%)"})
         clean_txt_df = clean_txt_df.rename(columns={"Date": "Sparta_Day_Date"})
 
