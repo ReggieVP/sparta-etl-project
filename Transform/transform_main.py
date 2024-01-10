@@ -2,6 +2,7 @@ import pandas as pd
 import datetime as dt
 import re
 from Extract.extract_main import Extract
+
 class Transform(Extract):
     def __init__(self):
         super().__init__()
@@ -14,6 +15,7 @@ class Transform(Extract):
         clean_txt_df = clean_txt_df.drop(columns= ["index"])
         clean_txt_df["Presentation"] = round(clean_txt_df["Presentation"].astype(int)*100/32,0).astype(int)
         clean_txt_df = clean_txt_df.rename(columns={"Psychometrics": "Psychometrics(%)", "Presentation": "Presentation(%)"})
+        clean_txt_df = clean_txt_df.rename(columns={"Date": "Sparta_Day_Date"})
 
         if "Name" in clean_txt_df.columns:
             split_names = clean_txt_df["Name"].str.rsplit(' ', n=1, expand=True)
@@ -57,6 +59,7 @@ class Transform(Extract):
         clean_business_df["Date"] = pd.to_datetime(clean_business_df["Date"])
         clean_business_df = clean_business_df.reset_index()
         clean_business_df = clean_business_df.drop(columns=["index"])
+        clean_business_df = clean_business_df.rename(columns={"Date": "Start_Date"})
 
         if "Name" in clean_business_df.columns:
             split_names = clean_business_df["Name"].str.rsplit(' ', n=1, expand=True)
@@ -81,6 +84,7 @@ class Transform(Extract):
         clean_engineering_df["Date"] = pd.to_datetime(clean_engineering_df["Date"])
         clean_engineering_df = clean_engineering_df.reset_index()
         clean_engineering_df = clean_engineering_df.drop(columns=["index"])
+        clean_engineering_df = clean_engineering_df.rename(columns={"Date": "Start_Date"})
 
         if "Name" in clean_engineering_df.columns:
             split_names = clean_engineering_df["Name"].str.rsplit(' ', n=1, expand=True)
@@ -105,6 +109,7 @@ class Transform(Extract):
         clean_data_df["Date"] = pd.to_datetime(clean_data_df["Date"])
         clean_data_df = clean_data_df.reset_index()
         clean_data_df = clean_data_df.drop(columns=['index'])
+        clean_data_df = clean_data_df.rename(columns={"Date": "Start_Date"})
 
         if "Name" in clean_data_df.columns:
             split_names = clean_data_df["Name"].str.rsplit(' ', n=1, expand=True)
@@ -138,6 +143,7 @@ class Transform(Extract):
         clean_applicants_df["Month"] = clean_applicants_df["Month"].str.replace("Sept", "September")
         clean_applicants_df["Date"] = clean_applicants_df["Invited_Date"].astype(int).astype(str) + " " + clean_applicants_df["Month"]
         clean_applicants_df["Date"] = pd.to_datetime(clean_applicants_df["Date"])
+        clean_applicants_df = clean_applicants_df.rename(columns={"Date": "Application_Date"})
 
         clean_applicants_df = clean_applicants_df.drop(columns=["Invited_Date", "Month", "Id"])
         clean_applicants_df["Dob"] = pd.to_datetime(clean_applicants_df["Dob"], format="%d/%m/%Y")
@@ -158,12 +164,7 @@ class Transform(Extract):
 
 
 
-
-
-instance1 = Transform()
-
 pd.set_option('display.max_columns', None)
 
-print(instance1.clean_txt())
 
 
