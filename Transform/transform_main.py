@@ -60,6 +60,7 @@ class Transform(Extract):
         clean_business_df = clean_business_df.reset_index()
         clean_business_df = clean_business_df.drop(columns=["index"])
         clean_business_df = clean_business_df.rename(columns={"Date": "Start_Date"})
+        clean_business_df["Course"] = "Business"
 
         if "Name" in clean_business_df.columns:
             split_names = clean_business_df["Name"].str.rsplit(' ', n=1, expand=True)
@@ -85,6 +86,7 @@ class Transform(Extract):
         clean_engineering_df = clean_engineering_df.reset_index()
         clean_engineering_df = clean_engineering_df.drop(columns=["index"])
         clean_engineering_df = clean_engineering_df.rename(columns={"Date": "Start_Date"})
+        clean_engineering_df["Course"] = "Engineering"
 
         if "Name" in clean_engineering_df.columns:
             split_names = clean_engineering_df["Name"].str.rsplit(' ', n=1, expand=True)
@@ -110,6 +112,7 @@ class Transform(Extract):
         clean_data_df = clean_data_df.reset_index()
         clean_data_df = clean_data_df.drop(columns=['index'])
         clean_data_df = clean_data_df.rename(columns={"Date": "Start_Date"})
+        clean_data_df["Course"] = "Data"
 
         if "Name" in clean_data_df.columns:
             split_names = clean_data_df["Name"].str.rsplit(' ', n=1, expand=True)
