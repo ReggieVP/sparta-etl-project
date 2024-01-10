@@ -1,9 +1,4 @@
 import pandas as pd
-import boto3
-import json
-import numpy as np
-from datetime import datetime
-
 from Extract.extract_main import Extract
 
 class TransformCSV(Extract):
@@ -18,7 +13,20 @@ class TransformCSV(Extract):
         business_df_transform = business_df_transform.reset_index()
         business_df_transform = business_df_transform.drop(columns=['index'])
 
+        if 'name' in business_df_transform.columns:
+            split_names = business_df_transform['name'].str.rsplit(' ', n=1, expand=True)
+            business_df_transform['forename'] = split_names[0]
+            business_df_transform['lastname'] = split_names[1] if len(split_names.columns) > 1 else None
+            business_df_transform.drop(columns=['name'], inplace=True)  # Drop 'name' column after splitting
+
+        if 'trainer' in business_df_transform.columns:
+            split_names = business_df_transform['trainer'].str.rsplit(' ', n=1, expand=True)
+            business_df_transform['forename'] = split_names[0]
+            business_df_transform['lastname'] = split_names[1] if len(split_names.columns) > 1 else None
+            business_df_transform.drop(columns=['trainer'], inplace=True)  # Drop 'name' column after splitting
+
         return business_df_transform
+
     def transform_engineering_csvs(self):
         engineering_df_transform = self.calling_bucket_engineering()
         engineering_df_transform = engineering_df_transform.fillna(0)
@@ -27,9 +35,21 @@ class TransformCSV(Extract):
         engineering_df_transform = engineering_df_transform.reset_index()
         engineering_df_transform = engineering_df_transform.drop(columns=['index'])
 
-        return engineering_df_transform
-    def transform_data_csvs(self):
+        if 'name' in engineering_df_transform.columns:
+            split_names = engineering_df_transform['name'].str.rsplit(' ', n=1, expand=True)
+            engineering_df_transform['forename'] = split_names[0]
+            engineering_df_transform['lastname'] = split_names[1] if len(split_names.columns) > 1 else None
+            engineering_df_transform.drop(columns=['name'], inplace=True)  # Drop 'name' column after splitting
 
+        if 'trainer' in engineering_df_transform.columns:
+            split_names = engineering_df_transform['trainer'].str.rsplit(' ', n=1, expand=True)
+            engineering_df_transform['forename'] = split_names[0]
+            engineering_df_transform['lastname'] = split_names[1] if len(split_names.columns) > 1 else None
+            engineering_df_transform.drop(columns=['trainer'], inplace=True)  # Drop 'name' column after splitting
+
+        return engineering_df_transform
+
+    def transform_data_csvs(self):
         data_df_transform = self.calling_bucket_data()
         data_df_transform = data_df_transform.fillna(0)
         data_df_transform['Date'] = data_df_transform['Date'].apply(lambda x: x[3:])
@@ -37,9 +57,19 @@ class TransformCSV(Extract):
         data_df_transform = data_df_transform.reset_index()
         data_df_transform = data_df_transform.drop(columns=['index'])
 
+        if 'name' in data_df_transform.columns:
+            split_names = data_df_transform['name'].str.rsplit(' ', n=1, expand=True)
+            data_df_transform['forename'] = split_names[0]
+            data_df_transform['lastname'] = split_names[1] if len(split_names.columns) > 1 else None
+            data_df_transform.drop(columns=['name'], inplace=True)  # Drop 'name' column after splitting
+
+        if 'trainer' in data_df_transform.columns:
+            split_names = data_df_transform['trainer'].str.rsplit(' ', n=1, expand=True)
+            data_df_transform['forename'] = split_names[0]
+            data_df_transform['lastname'] = split_names[1] if len(split_names.columns) > 1 else None
+            data_df_transform.drop(columns=['trainer'], inplace=True)  # Drop 'name' column after splitting
+
         return data_df_transform
-
-
 
 
 
@@ -49,7 +79,6 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.width', None)
 
 instance2 = TransformCSV()
-
 print(instance2.transform_engineering_csvs())
 print(instance2.transform_data_csvs())
 print(instance2.transform_business_csvs())
