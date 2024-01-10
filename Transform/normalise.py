@@ -23,8 +23,5 @@ class Normalise(Transform):
         return merged_df
 
 
-test = Normalise()
-pd.set_option('display.max_columns', None)
-print(test.merge_dataframes())
 
 
