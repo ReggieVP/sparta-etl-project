@@ -21,9 +21,10 @@ class TransformCSV(Extract):
 
         if 'trainer' in business_df_transform.columns:
             split_names = business_df_transform['trainer'].str.rsplit(' ', n=1, expand=True)
-            business_df_transform['forename'] = split_names[0]
-            business_df_transform['lastname'] = split_names[1] if len(split_names.columns) > 1 else None
+            business_df_transform['trainer_forename'] = split_names[0]
+            business_df_transform['trainer_lastname'] = split_names[1] if len(split_names.columns) > 1 else None
             business_df_transform.drop(columns=['trainer'], inplace=True)  # Drop 'name' column after splitting
+
 
         return business_df_transform
 
@@ -43,8 +44,8 @@ class TransformCSV(Extract):
 
         if 'trainer' in engineering_df_transform.columns:
             split_names = engineering_df_transform['trainer'].str.rsplit(' ', n=1, expand=True)
-            engineering_df_transform['forename'] = split_names[0]
-            engineering_df_transform['lastname'] = split_names[1] if len(split_names.columns) > 1 else None
+            engineering_df_transform['trainer_forename'] = split_names[0]
+            engineering_df_transform['trainer_lastname'] = split_names[1] if len(split_names.columns) > 1 else None
             engineering_df_transform.drop(columns=['trainer'], inplace=True)  # Drop 'name' column after splitting
 
         return engineering_df_transform
@@ -65,8 +66,8 @@ class TransformCSV(Extract):
 
         if 'trainer' in data_df_transform.columns:
             split_names = data_df_transform['trainer'].str.rsplit(' ', n=1, expand=True)
-            data_df_transform['forename'] = split_names[0]
-            data_df_transform['lastname'] = split_names[1] if len(split_names.columns) > 1 else None
+            data_df_transform['trainer_forename'] = split_names[0]
+            data_df_transform['trainer_lastname'] = split_names[1] if len(split_names.columns) > 1 else None
             data_df_transform.drop(columns=['trainer'], inplace=True)  # Drop 'name' column after splitting
 
         return data_df_transform
