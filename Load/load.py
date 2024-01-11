@@ -25,7 +25,7 @@ class Load:
 
         cursor.execute("""
                 CREATE TABLE trainer (
-                    trainer_id INT,
+                    trainer_id INT PRIMARY KEY,
                     forename VARCHAR(255),
                     lastname VARCHAR(255)
                 );
@@ -38,7 +38,7 @@ class Load:
 
         create_table_query = """
             CREATE TABLE weaknesses (
-                weakness_id INT,
+                weakness_id INT PRIMARY KEY,
                 weakness VARCHAR(MAX)
             );
         """
@@ -61,7 +61,7 @@ class Load:
              DROP TABLE IF EXISTS strengths;
 
              CREATE Table strengths (
-                 strength_id INTEGER ,
+                 strength_id INT PRIMARY KEY,
                  strength VARCHAR
              );
 
@@ -78,7 +78,7 @@ class Load:
              DROP TABLE IF EXISTS metrics;
 
              CREATE Table metrics (
-                 metric_id INTEGER,
+                 metric_id INT PRIMARY KEY,
                  metric VARCHAR 
              );
 
@@ -95,7 +95,7 @@ class Load:
              DROP TABLE IF EXISTS weeks;
 
              CREATE Table weeks (
-                 week_id INT,
+                 week_id INT PRIMARY KEY,
                  week_number INT
              );
 
@@ -112,7 +112,7 @@ class Load:
             DROP TABLE IF EXISTS University;
 
             CREATE Table University (
-                university_id INT,
+                university_id INT PRIMARY KEY,
                 university VARCHAR(MAX)
             );
             """
@@ -127,7 +127,7 @@ class Load:
             DROP TABLE IF EXISTS University_grade;
 
             CREATE Table University_grade (
-                grade_id INT,
+                grade_id INT PRIMARY KEY,
                 grade VARCHAR(MAX)
             );
             """
@@ -142,7 +142,7 @@ class Load:
             DROP TABLE IF EXISTS Tech;
 
             CREATE Table Tech (
-                tech_id INT,
+                tech_id INT PRIMARY KEY,
                 tech VARCHAR(MAX)
             );
             """
@@ -154,7 +154,7 @@ class Load:
 
         cursor.execute("""
                 CREATE TABLE city (
-                    city_id INT,
+                    city_id INT PRIMARY KEY,
                     city VARCHAR(255)
                 );
                 """)
@@ -165,7 +165,7 @@ class Load:
 
         cursor.execute("""
                 CREATE TABLE postcode (
-                    postcode_id INT,
+                    postcode_id INT PRIMARY KEY,
                     postcode VARCHAR(255)
                 );
                 """)
@@ -176,7 +176,7 @@ class Load:
 
         cursor.execute("""
                 CREATE TABLE talent_team (
-                    talent_team_id INT,
+                    talent_team_id INT PRIMARY KEY,
                     forename VARCHAR(255),
                     lastname VARCHAR(255)
                 );
@@ -188,7 +188,7 @@ class Load:
 
         cursor.execute("""
                 CREATE TABLE gender (
-                    gender_id INT,
+                    gender_id INT PRIMARY KEY,
                     gender VARCHAR(255)
                 );
                 """)
@@ -199,9 +199,10 @@ class Load:
 
         create_table_query = """
                     CREATE TABLE courses (
-                        course_id INT,
+                        course_id INT PRIMARY KEY,
                         course VARCHAR(MAX),
-                        trainer_id INT
+                        trainer_id INT,
+                        CONSTRAINT FK_courses_trainer FOREIGN KEY (trainer_id) REFERENCES trainer(trainer_id)
                     );
                 """
 
@@ -222,7 +223,8 @@ class Load:
 
                     CREATE TABLE student_weaknesses (
                         student_id INT,
-                        weakness_id INT
+                        weakness_id INT PRIMARY KEY,
+                        CONSTRAINT FK_studentweakness_weakness FOREIGN KEY (weakness_id) REFERENCES weaknesses(weakness_id)
                     );
                 """
 
@@ -244,7 +246,8 @@ class Load:
 
              CREATE Table student_strengths (
                  student_id INT,
-                 strength_id INT
+                 strength_id INT PRIMARY KEY,
+                 CONSTRAINT FK_studentstrength_strength FOREIGN KEY (strength_id) REFERENCES strengths(strength_id)
              );
 
              """
@@ -262,7 +265,9 @@ class Load:
             CREATE Table Education (
                 student_id INT,
                 university_id INT,
-                grade_id INT
+                grade_id INT,
+                CONSTRAINT FK_education_university FOREIGN KEY (university_id) REFERENCES university(university_id),
+                CONSTRAINT FK_education_universitygrade FOREIGN KEY (grade_id) REFERENCES university_grade(grade_id)
             );
             """
         )
@@ -276,7 +281,9 @@ class Load:
                     address_id INT,
                     student_id INT,
                     city_id INT,
-                    postcode VARCHAR(255)
+                    postcode VARCHAR(255),
+                    CONSTRAINT FK_address_city FOREIGN KEY (city_id) REFERENCES city(city_id),
+                    CONSTRAINT FK_address_postcode FOREIGN KEY (postcode_id) REFERENCES postcode(postcode_id)
                 );
                 """)
 
@@ -289,7 +296,7 @@ class Load:
              DROP TABLE IF EXISTS student;
 
             CREATE TABLE student (
-            student_id INT,
+            student_id INT PRIMARY KEY,
             forename VARCHAR(255),
             lastname VARCHAR(255),
             dob DATE,
@@ -302,7 +309,11 @@ class Load:
             financial_support BOOLEAN,
             course_id INT,
             talent_team_id INT,
-            start_date DATE
+            start_date DATE,
+            CONSTRAINT FK_student_gender FOREIGN KEY (gender_id) REFERENCES gender(gender_id),
+            CONSTRAINT FK_student_course FOREIGN KEY (course_id) REFERENCES courses(course_id),
+            CONSTRAINT FK_student_talent FOREIGN KEY (talent_team_id) REFERENCES talent_team(talent_team_id),
+            CONSTRAINT FK_student_address FOREIGN KEY (address_id) REFERENCES address(address_id)
         );
 
              """
@@ -330,7 +341,9 @@ class Load:
                         financial_support BIT,
                         course_id INT,
                         talent_team_id INT,
-                        start_date DATE
+                        start_date DATE,
+                        CONSTRAINT FK_precourse_student FOREIGN KEY (student_id) REFERENCES student(student_id),
+                        CONSTRAINT FK_precourse_course FOREIGN KEY (course_interest) REFERENCES courses(course_id)
                     );
                 """
 
@@ -356,11 +369,14 @@ class Load:
              DROP TABLE IF EXISTS weekly_scores;
 
              CREATE Table weekly_scores (
-                 weekly_scores_id INT,
+                 weekly_scores_id INT PRIMARY KEY,
                  student_id INT,
                  metric_id INT,
                  week_id INT,
                  score INT,
+                 CONSTRAINT FK_weeklyscore_student FOREIGN KEY (student_id) REFERENCES student(student_id),
+                 CONSTRAINT FK_weeklyscore_metric FOREIGN KEY (metric_id) REFERENCES metrics(metric_id),
+                 CONSTRAINT FK_weeklyscore_weeks FOREIGN KEY (week_id) REFERENCES weeks(week_id)
              );
 
              """
@@ -380,7 +396,9 @@ class Load:
             CREATE Table Tech_self_score (
                 student_id INT,
                 tech_id INT,
-                score INT
+                score INT,
+                CONSTRAINT FK_techscore_student FOREIGN KEY (student_id) REFERENCES student(student_id),
+                CONSTRAINT FK_techscore_tech FOREIGN KEY (tech_id) REFERENCES tech(tech_id)
             );
             """
         )
