@@ -20,7 +20,13 @@ class Normalise(Transform):
         for df in df_list_to_merge[2:]:
             merged_df = pd.merge(merged_df, df, on=['Forename', 'Lastname'], how='outer')
 
+        merged_df.insert(0, "Student_ID", range(1, 1 + len(merged_df)))
+
         return merged_df
+
+test = Normalise()
+pd.set_option('display.max_columns', None)
+print(test.merge_dataframes())
 
 
 
