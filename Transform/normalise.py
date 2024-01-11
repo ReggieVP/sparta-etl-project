@@ -181,18 +181,22 @@ class Normalise(Transform):
         merged_df = self.merge_dataframes()
         university = merged_df[["University_ID", "Uni"]].drop_duplicates().sort_values(
             by=["University_ID"]).copy()
+        university = university.dropna()
 
         return university
 
     def grade_table(self):
         merged_df = self.merge_dataframes()
         grades = merged_df[["Grade_ID", "Degree"]].drop_duplicates().sort_values(by=["Grade_ID"]).copy()
+        grades = grades.dropna()
 
         return grades
 
     def gender_table(self):
         merged_df = self.merge_dataframes()
         gender = merged_df[["Gender_ID", "Gender"]].drop_duplicates().sort_values(by=["Gender_ID"]).copy()
+        gender = gender.dropna()
+
 
         return gender
 
@@ -200,6 +204,7 @@ class Normalise(Transform):
         merged_df = self.merge_dataframes()
         education = merged_df[["Student_ID", "University_ID", "Grade_ID"]].drop_duplicates().sort_values(
             by=["Student_ID"]).copy()
+        education = education.dropna()
 
         return education
 
@@ -208,6 +213,7 @@ class Normalise(Transform):
         talent_team = merged_df[
             ["Talent_Team_ID", "Talent_Forename", "Talent_Lastname"]].drop_duplicates().sort_values(
             by=["Talent_Team_ID"]).copy()
+        talent_team = talent_team.dropna()
 
         return talent_team
 
@@ -285,4 +291,6 @@ class Normalise(Transform):
 
 test = Normalise()
 pd.set_option('display.max_columns', None)
-print(test.precourses())
+print(test.students())
+
+
