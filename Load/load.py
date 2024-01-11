@@ -12,7 +12,7 @@ class Load(Normalise):
         server = 'localhost,1433'
         database = 'Sparta_Final_Project'
         username = 'SA'
-        password = 'Kendrick2018<3'
+        password = 'Password123!'
 
         cnxn = pyodbc.connect(
             'DRIVER={ODBC Driver 17 for SQL Server};'
@@ -215,7 +215,9 @@ class Load(Normalise):
         cursor.execute(create_table_query)
 
         # Commit changes
-        cnxn.commit()
+
+        conn.commit()
+
 
         create_table_query = """
                     DROP TABLE IF EXISTS courses;
@@ -229,6 +231,7 @@ class Load(Normalise):
                 """
 
         #Insert Dataframe into SQL Server:
+
         for index, row in self.courses_table().iterrows():
             cursor.execute("INSERT INTO courses (course_id, course, trainer_id) VALUES (?, ?, ?)",
                            row['Course_ID'], row['Course_Interest'], row['Trainer_ID'])
@@ -292,9 +295,26 @@ class Load(Normalise):
         #     cursor.execute("INSERT INTO Education (student_id, university_id ,grade_id) values(?,?,?)",
         #                    row['Student_ID'], row['University_ID'], row['Grade_ID'])
 
+
         cursor.execute(
             """
                 DROP TABLE IF EXISTS address;
+
+            CREATE Table Education (
+                student_id INT,
+                university_id INT,
+                grade_id INT,
+                CONSTRAINT FK_education_university FOREIGN KEY (university_id) REFERENCES university(university_id),
+                CONSTRAINT FK_education_universitygrade FOREIGN KEY (grade_id) REFERENCES university_grade(grade_id)
+            );
+            """
+        )
+        # Insert Dataframe into SQL Server:
+        for index, row in self.education().iterrows():
+            cursor.execute("INSERT INTO Education (student_id, university_id ,grade_id) values(?,?,?)",
+                           row['Student_ID'], row['University_ID'], row['Grade_ID'])
+
+        cursor.execute("""
 
                 CREATE TABLE address (
                     address_id INT,
@@ -307,7 +327,9 @@ class Load(Normalise):
                 """)
 
         for index, row in self.address_table().iterrows():
-            cursor.execute("INSERT INTO address (address_id, student_id, city_id, postcode_id) VALUES (?, ?, ?, ?)",
+
+          cursor.execute("INSERT INTO address (address_id, student_id, city_id, postcode_id) VALUES (?, ?, ?, ?)",
+
                            (row['Address_ID'], row['Student_ID'], row['City_ID'], row['Postcode_ID']))
 
         cursor.execute(
@@ -350,6 +372,7 @@ class Load(Normalise):
             DROP TABLE IF EXISTS pre_course;
 
             CREATE TABLE pre_course (
+
                 student_id INT,
                 psychometric_score INT,
                 presentation_score INT,
