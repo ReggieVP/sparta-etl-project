@@ -113,32 +113,29 @@ class Normalise(Transform):
                         strength_df.index[strength_df["Strengths"] == word][0]]]
         return student_strength_df
 
-    def tech_score_table(self):
+    def tech_table(self):
         merged_df = self.merge_dataframes()
         selected_columns = ['C#', 'Java', 'R', 'Javascript', 'Python', 'C++', 'Ruby', 'SPSS', 'PHP']
         cols = {'Language_ID': [1, 2, 3, 4, 5, 6, 7, 8, 9],
                 'Language': merged_df[selected_columns].columns.tolist()}
 
         language_df = pd.DataFrame(data=cols)
-        #print(language_df)
+        return language_df
 
 
+    def tech_score_table(self):
+        merged_df = self.merge_dataframes()
+        language_df = self.tech_table()
         tech_score_df = pd.DataFrame(columns=["Student_Id", "Langauge_ID", "Score"])
         for row in merged_df["Student_ID"]:
             for columns in language_df["Language"]:
                 if not np.isnan(merged_df[columns][row - 1]):
                     tech_score_df.loc[len(tech_score_df.index)] = [row, language_df["Language_ID"]\
                         [language_df.index[language_df["Language"] == columns][0]], merged_df[columns][row - 1]]
-
-        tech_score_df.astype(int)
+        tech_score_df = tech_score_df.astype(int)
         return tech_score_df
-
-
 
 test = Normalise()
 pd.set_option('display.max_columns', None)
 print(test.tech_score_table())
-
-
-
 
