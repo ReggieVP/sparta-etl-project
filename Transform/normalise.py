@@ -6,7 +6,6 @@ class Normalise(Transform):
 
     def __init__(self):
         super().__init__()
-
     def merge_courses(self):
         merge_courses_dfs = pd.merge(self.clean_data_csvs(), pd.merge(self.clean_engineering_csvs(), self.clean_business_csvs(),
         how='outer'), how='outer')
@@ -133,10 +132,10 @@ class Normalise(Transform):
                 if not np.isnan(merged_df[columns][row - 1]):
                     tech_score_df.loc[len(tech_score_df.index)] = [row, language_df["Language_ID"]\
                         [language_df.index[language_df["Language"] == columns][0]], merged_df[columns][row - 1]]
-
         tech_score_df = tech_score_df.astype(int)
         return tech_score_df
 
 test = Normalise()
 pd.set_option('display.max_columns', None)
 print(test.tech_score_table())
+
