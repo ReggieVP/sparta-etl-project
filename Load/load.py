@@ -1,14 +1,18 @@
 import pandas as pd
 import pyodbc
+from Transform.normalise import Normalise
 
 
-class Load:
+class Load(Normalise):
+
+    def __init__(self):
+        super().__init__()
 
     def loading_data_to_sql(self):
         server = 'localhost,1433'
         database = 'Sparta_Final_Project'
         username = 'SA'
-        password = 'Coc123-4wegfbdhhdsT*5'
+        password = 'Kendrick2018<3'
 
         cnxn = pyodbc.connect(
             'DRIVER={ODBC Driver 17 for SQL Server};'
@@ -24,6 +28,7 @@ class Load:
 
 
         cursor.execute("""
+                DROP TABLE IF EXISTS trainer
                 CREATE TABLE trainer (
                     trainer_id INT PRIMARY KEY,
                     forename VARCHAR(255),
@@ -31,12 +36,13 @@ class Load:
                 );
                 """)
 
-        for index, row in trainer.iterrows():
+        for index, row in self.trainers_table().iterrows():
             cursor.execute("INSERT INTO trainer (trainer_id, forename, lastname) VALUES (?, ?, ?)",
                            (row['Trainer_ID'], row['Trainer_Forename'], row['Trainer_Lastname']))
 
 
         create_table_query = """
+            DROP TABLE IF EXISTS weaknesses
             CREATE TABLE weaknesses (
                 weakness_id INT PRIMARY KEY,
                 weakness VARCHAR(MAX)
@@ -47,12 +53,12 @@ class Load:
         cursor.execute(create_table_query)
 
         # Commit changes
-        conn.commit()
+        cnxn.commit()
 
         # Insert Dataframe into SQL Server:
-        for index, row in df.iterrows():
+        for index, row in self.weakness_table().iterrows():
             cursor.execute("INSERT INTO weaknesses (weakness_id, weakness) VALUES (?, ?)",
-                           row['Weakness_ID'], row['Weakness'])
+                           row['Weaknesses_ID'], row['Weaknesses'])
 
 
 
@@ -62,16 +68,16 @@ class Load:
 
              CREATE Table strengths (
                  strength_id INT PRIMARY KEY,
-                 strength VARCHAR
+                 strength VARCHAR(MAX)
              );
 
              """
         )
 
         # Insert Dataframe into SQL Server:
-        for index, row in df.iterrows():
+        for index, row in self.strength_table().iterrows():
             cursor.execute("INSERT INTO strengths (strength_id, strength) values(?,?)",
-                           row['Strength_ID'], row['Strength'])
+                           row['Strengths_ID'], row['Strengths'])
 
         cursor.execute(
             """
@@ -79,16 +85,16 @@ class Load:
 
              CREATE Table metrics (
                  metric_id INT PRIMARY KEY,
-                 metric VARCHAR 
+                 metric VARCHAR(MAX)
              );
 
              """
         )
 
         # Insert Dataframe into SQL Server:
-        for index, row in df.iterrows():
+        for index, row in self.metrics_table().iterrows():
             cursor.execute("INSERT INTO metrics (metric_id,metric) values(?,?)",
-                           row['Metric_ID'], row['Metric'])
+                           row['metric_id'], row['metric'])
 
         cursor.execute(
             """
@@ -96,16 +102,16 @@ class Load:
 
              CREATE Table weeks (
                  week_id INT PRIMARY KEY,
-                 week_number INT
+                 week_number VARCHAR(3)
              );
 
              """
         )
 
         # Insert Dataframe into SQL Server:
-        for index, row in df.iterrows():
+        for index, row in self.weeks_table().iterrows():
             cursor.execute("INSERT INTO weeks (week_id,week_number) values(?,?)",
-                           row['Week_ID'], row['Week_Number'])
+                           row['week_id'], row['week_number'])
 
         cursor.execute(
             """
@@ -118,9 +124,9 @@ class Load:
             """
         )
 
-        for index, row in University.iterrows():
+        for index, row in self.university_table().iterrows():
             cursor.execute("INSERT INTO University (university_id, university) VALUES (?, ?)",
-                           row['University_ID'], row['University'])
+                           row['University_ID'], row['Uni'])
 
         cursor.execute(
             """
@@ -133,9 +139,9 @@ class Load:
             """
         )
 
-        for index, row in University_grade.iterrows():
+        for index, row in self.grade_table().iterrows():
             cursor.execute("INSERT INTO University_grade (grade_id, grade) VALUES (?, ?)",
-                           row['Grade_ID'], row['Grade'])
+                           row['Grade_ID'], row['Degree'])
 
         cursor.execute(
             """
@@ -148,33 +154,39 @@ class Load:
             """
         )
 
-        for index, row in Tech.iterrows():
+        for index, row in self.tech_table().iterrows():
             cursor.execute("INSERT INTO Tech (tech_id, tech) VALUES (?, ?)",
-                           row['Tech_ID'], row['Tech'])
+                           row['Language_ID'], row['Language'])
 
         cursor.execute("""
+                DROP TABLE IF EXISTS city;
+
                 CREATE TABLE city (
                     city_id INT PRIMARY KEY,
                     city VARCHAR(255)
                 );
                 """)
 
-        for index, row in city.iterrows():
+        for index, row in self.city_table().iterrows():
             cursor.execute("INSERT INTO city (city_id, city) VALUES (?, ?)",
                            (row['City_ID'], row['City']))
 
         cursor.execute("""
+                DROP TABLE IF EXISTS postcode;
+
                 CREATE TABLE postcode (
                     postcode_id INT PRIMARY KEY,
                     postcode VARCHAR(255)
                 );
                 """)
 
-        for index, row in postcode.iterrows():
+        for index, row in self.postcode_table().iterrows():
             cursor.execute("INSERT INTO postcode (postcode_id, postcode) VALUES (?, ?)",
                            (row['Postcode_ID'], row['Postcode']))
 
         cursor.execute("""
+                DROP TABLE IF EXISTS talent_team;
+
                 CREATE TABLE talent_team (
                     talent_team_id INT PRIMARY KEY,
                     forename VARCHAR(255),
@@ -182,40 +194,44 @@ class Load:
                 );
                 """)
 
-        for index, row in talent_team.iterrows():
+        for index, row in self.talent_team().iterrows():
             cursor.execute("INSERT INTO talent_team (talent_team_id, forename, lastname) VALUES (?, ?, ?)",
                            (row['Talent_Team_ID'], row['Talent_Forename'], row['Talent_Lastname']))
 
         cursor.execute("""
+                DROP TABLE IF EXISTS gender;
+
                 CREATE TABLE gender (
                     gender_id INT PRIMARY KEY,
                     gender VARCHAR(255)
                 );
                 """)
 
-        for index, row in gender.iterrows():
+        for index, row in self.gender_table().iterrows():
             cursor.execute("INSERT INTO gender (gender_id, gender) VALUES (?, ?)",
                            (row['Gender_ID'], row['Gender']))
-
-        create_table_query = """
-                    CREATE TABLE courses (
-                        course_id INT PRIMARY KEY,
-                        course VARCHAR(MAX),
-                        trainer_id INT,
-                        CONSTRAINT FK_courses_trainer FOREIGN KEY (trainer_id) REFERENCES trainer(trainer_id)
-                    );
-                """
 
         # Execute the SQL command to create the table
         cursor.execute(create_table_query)
 
         # Commit changes
-        conn.commit()
+        cnxn.commit()
 
-        # Insert Dataframe into SQL Server:
-        for index, row in df.iterrows():
+        create_table_query = """
+                    DROP TABLE IF EXISTS courses;
+
+                    CREATE TABLE courses (
+                        course_id INT PRIMARY KEY,
+                        course VARCHAR(MAX),
+                        trainer_id INT,
+                        CONSTRAINT FK_coursestrainer_trainer FOREIGN KEY (trainer_id) REFERENCES trainer(trainer_id)
+                    );
+                """
+
+        #Insert Dataframe into SQL Server:
+        for index, row in self.courses_table().iterrows():
             cursor.execute("INSERT INTO courses (course_id, course, trainer_id) VALUES (?, ?, ?)",
-                           row['Course_ID'], row['Course'], row['Trainer_ID'])
+                           row['Course_ID'], row['Course_Interest'], row['Trainer_ID'])
 
 
         create_table_query = """
@@ -232,13 +248,13 @@ class Load:
         cursor.execute(create_table_query)
 
         # Insert DataFrame data into the created SQL table (student_weaknesses)
-        for index, row in df_weaknesses.iterrows():
+        for index, row in self.weakness_junction_df().iterrows():
             cursor.execute("""
                         INSERT INTO student_weaknesses (
                             student_id, weakness_id
                         ) VALUES (?, ?)
                     """,
-                           row['Student_ID'], row['Weakness_ID'])
+                           row['Student_ID'], row['Weaknesses_ID'])
 
         cursor.execute(
             """
@@ -254,46 +270,49 @@ class Load:
         )
 
         # Insert Dataframe into SQL Server:
-        for index, row in df.iterrows():
+        for index, row in self.strength_junction_table().iterrows():
             cursor.execute("INSERT INTO student_strengths (student_id, strength_id) values(?,?)",
-                           row['Student_ID'], row['Strength_ID'])
+                           row['Student_ID'], row['Strengths_ID'])
+
+        # cursor.execute(
+        #     """
+        #     DROP TABLE IF EXISTS Education;
+        #
+        #     CREATE Table Education (
+        #         student_id INT,
+        #         university_id INT,
+        #         grade_id INT,
+        #         CONSTRAINT FK_education_university FOREIGN KEY (university_id) REFERENCES university(university_id),
+        #         CONSTRAINT FK_education_universitygrade FOREIGN KEY (grade_id) REFERENCES university_grade(grade_id)
+        #     );
+        #     """
+        # )
+        # # Insert Dataframe into SQL Server:
+        # for index, row in self.education().iterrows():
+        #     cursor.execute("INSERT INTO Education (student_id, university_id ,grade_id) values(?,?,?)",
+        #                    row['Student_ID'], row['University_ID'], row['Grade_ID'])
 
         cursor.execute(
             """
-            DROP TABLE IF EXISTS Education;
+                DROP TABLE IF EXISTS address;
 
-            CREATE Table Education (
-                student_id INT,
-                university_id INT,
-                grade_id INT,
-                CONSTRAINT FK_education_university FOREIGN KEY (university_id) REFERENCES university(university_id),
-                CONSTRAINT FK_education_universitygrade FOREIGN KEY (grade_id) REFERENCES university_grade(grade_id)
-            );
-            """
-        )
-        # Insert Dataframe into SQL Server:
-        for index, row in Education.iterrows():
-            cursor.execute("INSERT INTO Education (student_id, university_id ,grade_id) values(?,?,?)",
-                           row['Student_ID'], row['University_ID'], row['Grade_ID'])
-
-        cursor.execute("""
                 CREATE TABLE address (
                     address_id INT,
                     student_id INT,
                     city_id INT,
-                    postcode VARCHAR(255),
+                    postcode_id INT,
                     CONSTRAINT FK_address_city FOREIGN KEY (city_id) REFERENCES city(city_id),
                     CONSTRAINT FK_address_postcode FOREIGN KEY (postcode_id) REFERENCES postcode(postcode_id)
                 );
                 """)
 
-        for index, row in address.iterrows():
-            cursor.execute("INSERT INTO address (address_id, student_id, city_id, postcode) VALUES (?, ?, ?, ?)",
-                           (row['Address_ID'], row['Student_ID'], row['City_ID'], row['Postcode']))
+        for index, row in self.address_table().iterrows():
+            cursor.execute("INSERT INTO address (address_id, student_id, city_id, postcode_id) VALUES (?, ?, ?, ?)",
+                           (row['Address_ID'], row['Student_ID'], row['City_ID'], row['Postcode_ID']))
 
         cursor.execute(
             """
-             DROP TABLE IF EXISTS student;
+            DROP TABLE IF EXISTS student;
 
             CREATE TABLE student (
             student_id INT PRIMARY KEY,
@@ -304,9 +323,9 @@ class Load:
             email VARCHAR(255),
             address_id INT,
             phone_number VARCHAR(50),
-            self_development BOOLEAN,
-            geo_flex BOOLEAN,
-            financial_support BOOLEAN,
+            self_development VARCHAR(3),
+            geo_flex VARCHAR(3),
+            financial_support VARCHAR(3),
             course_id INT,
             talent_team_id INT,
             start_date DATE,
@@ -319,57 +338,46 @@ class Load:
              """
         )
 
-        for index, row in student.iterrows():
+        for index, row in self.students().iterrows():
             cursor.execute(
                 "INSERT INTO student (student_id, forename, lastname, dob, gender_ID, email, address_id, phone_number, self_development, geo_flex, financial_support, course_id, talent_team_id, start_date) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                (row['Student_ID'], row['Forename'], row['Lastname'], row['Dob'], row['Gender_ID'], row['Email'],
+                (row['Student_ID'], row['Forename'], row['Lastname'], row['Dob'], row['Gender'], row['Email'],
                  row['Address_ID'], row['Phone_Number'], row['Self_Development'], row['Geo_Flex'],
-                 row['Financial_Support'], row['Course_ID'], row['Talent_Team_ID'], row['Start_Date']))
+                 row['Financial_Support_Self'], row['Course_ID'], row['Talent_Team_ID'], row['Start_Date']))
 
-        create_table_query = """
-                    DROP TABLE IF EXISTS pre_course;
+        cursor.execute(
+            """
+            DROP TABLE IF EXISTS pre_course;
 
-                    CREATE TABLE pre_course (
-                        student_id INT,
-                        dob INT,
-                        gender INT,
-                        email VARCHAR(MAX),
-                        address_id VARCHAR(MAX),
-                        phone_number INT,
-                        self_development BIT,
-                        geo_flex BIT,
-                        financial_support BIT,
-                        course_id INT,
-                        talent_team_id INT,
-                        start_date DATE,
-                        CONSTRAINT FK_precourse_student FOREIGN KEY (student_id) REFERENCES student(student_id),
-                        CONSTRAINT FK_precourse_course FOREIGN KEY (course_interest) REFERENCES courses(course_id)
-                    );
-                """
+            CREATE TABLE pre_course (
+                student_id INT,
+                psychometric_score INT,
+                presentation_score INT,
+                course_interest INT,
+                result VARCHAR(3),
+                sparta_day_date DATE,
+                application_date DATE,
+                CONSTRAINT FK_precourse_student FOREIGN KEY (student_id) REFERENCES student(student_id),
+                CONSTRAINT FK_precourse_courseinterest FOREIGN KEY (course_interest) REFERENCES courses(course_id)
+            );
+        """)
 
         # Execute the SQL command to create the table
         cursor.execute(create_table_query)
 
-        # Insert DataFrame data into the created SQL table (pre_course)
-        for index, row in df.iterrows():
-            cursor.execute("""
-                        INSERT INTO pre_course (
-                            student_id, full_name, dob, gender, email, address_id,
-                            phone_number, self_development, geo_flex, financial_support,
-                            course_id, talent_team_id, start_date
-                        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                           row['Student_ID'], row['Dob'], row['Gender'],
-                           row['Email'], row['Address_ID'], row['Phone_Number'], row['Self_Development'],
-                           row['Geo_Flex'], row['Financial_Support'], row['Course_ID'],
-                           row['Talent_Team_ID'], row['Start_Date'])
+        for index, row in self.precourses().iterrows():
+            cursor.execute(
+                "INSERT INTO pre_course (student_id, psychometric_score, presentation_score, course_interest, result, sparta_day_date, application_date) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (row['Student_ID'], row['Psychometrics(%)'], row['Presentation(%)'],
+                 row['Course_Interest'], row['Result'], row['Sparta_Day_Date'],
+                 row['Application_Date']))
+
 
         cursor.execute(
             """
              DROP TABLE IF EXISTS weekly_scores;
 
              CREATE Table weekly_scores (
-                 weekly_scores_id INT PRIMARY KEY,
                  student_id INT,
                  metric_id INT,
                  week_id INT,
@@ -383,10 +391,10 @@ class Load:
         )
 
         # Insert Dataframe into SQL Server:
-        for index, row in df.iterrows():
+        for index, row in self.weekly_scores_table().iterrows():
             cursor.execute(
-                "INSERT INTO weekly_scores (weekly_scores_id,student_id,metric_id,week_id,score) values(?,?,?,?,?)",
-                row['Weekly_Scores_ID'], row['Student_ID'], row['Metric_ID'], row['Week_ID'], row['Score'])
+                "INSERT INTO weekly_scores (weekly_scores_id,student_id,metric_id,week_id,score) values(?,?,?,?)",
+                row['Student_ID'], row['Metric_ID'], row['Week_ID'], row['Score'])
 
         cursor.execute(
 
@@ -403,14 +411,17 @@ class Load:
             """
         )
 
-        for index, row in Tech_self_score.iterrows():
+        for index, row in self.tech_score_table().iterrows():
             cursor.execute("INSERT INTO Tech_self_score (student_id, tech_id, score) VALUES (?, ?, ?)",
-                           row['Student_id'], row['Tech_ID'], row['Score'])
+                           row['Student_id'], row['Language_ID'], row['Score'])
 
 
 
 
-    cnxn.commit()
-    cursor.close()
-    cnxn.close()
+        cnxn.commit()
+        cursor.close()
+        cnxn.close()
 
+
+instance1 = Load()
+instance1.loading_data_to_sql()
