@@ -47,8 +47,8 @@ class Normalise(Transform):
         merged_df['Address_ID'] = (merged_df.groupby(['Address']).cumcount() == 0).astype(int)
         merged_df['Address_ID'] = merged_df['Address_ID'].cumsum()
 
-        merged_df = merged_df.sort_values('Course')
-        merged_df['Course_ID'] = (merged_df.groupby(['Course']).cumcount() == 0).astype(int)
+        merged_df = merged_df.sort_values('Course_Interest')
+        merged_df['Course_ID'] = (merged_df.groupby(['Course_Interest']).cumcount() == 0).astype(int)
         merged_df['Course_ID'] = merged_df['Course_ID'].cumsum()
 
         merged_df = merged_df.sort_values(['Talent_Forename', 'Talent_Lastname'])
@@ -148,6 +148,7 @@ class Normalise(Transform):
         merged_df = self.merge_dataframes()
         trainers = merged_df[["Trainer_ID", "Trainer_Forename", "Trainer_Lastname"]].drop_duplicates().sort_values(
             by=["Trainer_ID"]).copy()
+        trainers = trainers.dropna()
 
         return trainers
 
@@ -297,6 +298,6 @@ class Normalise(Transform):
 
 
 test = Normalise()
-pd.set_option('display.max_columns', None)
-print(test.students())
+
+print(test.trainers_table())
 
