@@ -76,6 +76,7 @@ class Normalise(Transform):
         weakness_list = list(set(weakness_list))
         weakness_df = pd.DataFrame(data=weakness_list, columns=['Weaknesses'])
         weakness_df.insert(0, "Weaknesses_ID", range(1, 1 + len(weakness_df)))
+
         return weakness_df
 
     def weakness_junction_df(self):
@@ -88,6 +89,7 @@ class Normalise(Transform):
                 for word in word_list:
                     student_weakness_df.loc[len(student_weakness_df.index)] = [row, weakness_df["Weaknesses_ID"][
                         weakness_df.index[weakness_df["Weaknesses"] == word][0]]]
+
         return student_weakness_df
 
     def strength_table(self):
@@ -103,6 +105,7 @@ class Normalise(Transform):
         strength_list = list(set(strength_list))
         strength_df = pd.DataFrame(data=strength_list, columns=['Strengths'])
         strength_df.insert(0, "Strengths_ID", range(1, 1 + len(strength_df)))
+
         return strength_df
 
     def strength_junction_table(self):
@@ -115,6 +118,7 @@ class Normalise(Transform):
                 for word in word_list:
                     student_strength_df.loc[len(student_strength_df.index)] = [row, strength_df["Strengths_ID"][
                         strength_df.index[strength_df["Strengths"] == word][0]]]
+
         return student_strength_df
 
     def tech_table(self):
@@ -124,6 +128,7 @@ class Normalise(Transform):
                 'Language': merged_df[selected_columns].columns.tolist()}
 
         language_df = pd.DataFrame(data=cols)
+
         return language_df
 
     def tech_score_table(self):
@@ -136,18 +141,21 @@ class Normalise(Transform):
                     tech_score_df.loc[len(tech_score_df.index)] = [row, language_df["Language_ID"] \
                         [language_df.index[language_df["Language"] == columns][0]], merged_df[columns][row - 1]]
         tech_score_df = tech_score_df.astype(int)
+
         return tech_score_df
 
     def trainers_table(self):
         merged_df = self.merge_dataframes()
         trainers = merged_df[["Trainer_ID", "Trainer_Forename", "Trainer_Lastname"]].drop_duplicates().sort_values(
             by=["Trainer_ID"]).copy()
+
         return trainers
 
     def courses_table(self):
         merged_df = self.merge_dataframes()
         courses = merged_df[["Course_ID", "Course", "Trainer_ID"]].drop_duplicates().sort_values(
             by=["Course_ID"]).copy()
+
         return courses
 
     def city_table(self):
@@ -165,6 +173,7 @@ class Normalise(Transform):
         postcode_df = postcode_df.drop_duplicates()
         postcode_df = postcode_df.sort_values(by='Postcode_ID')
         postcode_df = postcode_df.dropna()
+
         return postcode_df
 
     def address_table(self):
@@ -173,6 +182,7 @@ class Normalise(Transform):
         address_df = address_df.drop_duplicates()
         address_df = address_df.sort_values(by='Address_ID')
         address_df = address_df.dropna()
+
         return address_df
 
     def university_table(self):
@@ -186,12 +196,14 @@ class Normalise(Transform):
     def grade_table(self):
         merged_df = self.merge_dataframes()
         grades = merged_df[["Grade_ID", "Degree"]].drop_duplicates().sort_values(by=["Grade_ID"]).copy()
+        grades = grades.dropna()
 
         return grades
 
     def gender_table(self):
         merged_df = self.merge_dataframes()
         gender = merged_df[["Gender_ID", "Gender"]].drop_duplicates().sort_values(by=["Gender_ID"]).copy()
+        gender = gender.dropna()
 
         return gender
 
@@ -199,6 +211,7 @@ class Normalise(Transform):
         merged_df = self.merge_dataframes()
         education = merged_df[["Student_ID", "University_ID", "Grade_ID"]].drop_duplicates().sort_values(
             by=["Student_ID"]).copy()
+        education = education.dropna()
 
         return education
 
@@ -207,6 +220,7 @@ class Normalise(Transform):
         talent_team = merged_df[
             ["Talent_Team_ID", "Talent_Forename", "Talent_Lastname"]].drop_duplicates().sort_values(
             by=["Talent_Team_ID"]).copy()
+        talent_team = talent_team.dropna()
 
         return talent_team
 
@@ -280,7 +294,6 @@ class Normalise(Transform):
         student = student.dropna()
 
         return student
-
 
 #test = Normalise()
 #pd.set_option('display.max_columns', None)
