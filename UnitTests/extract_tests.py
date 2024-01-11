@@ -146,6 +146,20 @@ class TestDataProcessor(unittest.TestCase):
                          'tech_self_score.C++','tech_self_score.Ruby','tech_self_score.SPSS','tech_self_score.PHP']
 
         self.assertEqual(expected_data, column_names)
+
+    # ------------------------------------------------------------------------
+    # Test for applicants extract to check dataframe columns are correct
+    # ------------------------------------------------------------------------
+    def test_calling_bucket_applicants_returns_correct_dataframe(self):
+        extractor = Extract()
+
+        result_df = extractor.calling_bucket_applicants()
+
+        column_names = result_df.columns.tolist()
+        expected_data = ['id','name','gender','dob','email','city','address','postcode','phone_number',
+                         'uni','degree','invited_date','month','invited_by']
+
+        self.assertEqual(expected_data, column_names)
 if __name__ == '__main__':
     unittest.main()
     ##
