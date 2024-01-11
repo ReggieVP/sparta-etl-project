@@ -88,7 +88,6 @@ class Extract:
         return engineering_df
 
 
-
     def calling_bucket_json(self):
         """
         Function to handle JSON files in the S3 bucket.
@@ -160,8 +159,5 @@ class Extract:
                     text_df = pd.concat([text_df, txt_df])
 
         return text_df
-
-
-
 
 
