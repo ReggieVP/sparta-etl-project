@@ -1,7 +1,7 @@
 # Transform Folder
 ---
 ## Overview
-The Transform folder in the Sparta ETL project contains a script and data sources specifically dedicated to the transformation phase of the ETL pipeline. This phase focuses on taking the extracted data from the previous phase, and transforming it into a format and structre that both meets the clinets needs and is ready for loading and data visualisation. This step also includes abstracting the data into 3rd Normal form, and data cleaning. 
+The Transform folder in the Sparta ETL project contains a script and data sources specifically dedicated to the transformation phase of the ETL pipeline. This phase focuses on taking the extracted data from the previous phase, and transforming it into a format and structre that both meets the clients needs and is ready for loading and data visualisation. This step also includes abstracting the data into 3rd Normal form, and data cleaning. 
 
 ## The Process:
 - The Python code provided in **transform_main.py** defines a class named Transform designed for an ETL (Extract, Transform, Load) process stored on data stored in an Amazon S3 bucket.
@@ -47,6 +47,7 @@ The Transform folder in the Sparta ETL project contains a script and data source
 - Redundant date is present. 
 
 #### Solutions: 
+- Null values kept as this indicates no score was given, rather than a score of 0. 
 - Redundant date removed.
 
 ### Applicant csv Files:
@@ -56,9 +57,9 @@ The Transform folder in the Sparta ETL project contains a script and data source
 - Invited date and invited month & year in separate columns and not in the standard date format.
 
 #### Solutions:
-- Formatted the number to present in the correct format.
+- Formatted the phone number to present in the correct format.
 - Formatted the postcode to be in the correct order and format.
-- Combined date and invites month & year into one column, transformed it to datetime and yy-mm-dd format to be uniform across all tables.
+- Combined date and invited month & year into one column, converted it to datetime and yy-mm-dd format to be uniform across all tables.
 
 ### Sparta Day txt Files:
 #### Issues: 
@@ -69,5 +70,6 @@ The Transform folder in the Sparta ETL project contains a script and data source
 #### Solution: 
 - Psychometric and presentation scores extracted, leaving only the values.
 - Columns names given to each column – for example Name, Psychometric score, Presentation Score.
+- Data seprated into a DataFrame so that the key information is easily accessible. 
 
 
