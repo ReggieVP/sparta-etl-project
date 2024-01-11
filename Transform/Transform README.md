@@ -25,3 +25,49 @@ The Transform folder in the Sparta ETL project contains a script and data source
      
      ```python transform_main.py```
 
+
+## Data Cleaning Documentation
+- The data cleaning process required different methods to be adopted in order to ensure the data was in appropriate formats.
+- Therefore different methods were adopted and different challenges presented as extracted data was not uniform, and there were many missing values.
+- 
+**Below are the different issues faced, and the strategies taken to overcome them:**
+
+### Course csv Files:
+#### Issues: 
+- Null values for scores of students who have left the academy at a certain point 
+- Date contains the course prefix and not in the correct format 
+
+#### Solution:  
+- Impute 0 for null values - there are no zero values in the data set so this will indicate that the student left the academy. 
+- Remove the course prefix and use to_datetime method to convert the date into a standard date format throughout all the files. 
+
+ ### Individual JSON Files:
+#### Issues: 
+- Null values in tech self-score for different tech stacks between individuals 
+- Redundant date is present. 
+
+#### Solutions: 
+- Redundant date removed.
+
+### Applicant csv Files:
+#### Issues: 
+- Phone number not in standard format. 
+- Post code not in standard format.
+- Invited date and invited month & year in separate columns and not in the standard date format.
+
+#### Solutions:
+- Formatted the number to present in the correct format.
+- Formatted the postcode to be in the correct order and format.
+- Combined date and invites month & year into one column, transformed it to datetime and yy-mm-dd format to be uniform across all tables.
+
+### Sparta Day txt Files:
+#### Issues: 
+- Psychometric and presentation scores were out of a total score meaning it would be harder to visualise this data 
+- Columns do not have correct column headers 
+- Date is not in the standard format 
+
+#### Solution: 
+- Psychometric and presentation scores extracted, leaving only the values 
+- Columns names given to each column – for example Name, Psychometric score, Presentation Score 
+
+
