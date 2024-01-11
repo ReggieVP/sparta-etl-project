@@ -29,7 +29,6 @@ The Transform folder in the Sparta ETL project contains a script and data source
 ## Data Cleaning Documentation
 - The data cleaning process required different methods to be adopted in order to ensure the data was in appropriate formats.
 - Therefore different methods were adopted and different challenges presented as extracted data was not uniform, and there were many missing values.
-- 
 **Below are the different issues faced, and the strategies taken to overcome them:**
 
 ### Course csv Files:
