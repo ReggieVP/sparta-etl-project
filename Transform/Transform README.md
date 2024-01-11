@@ -22,5 +22,6 @@ The Transform folder in the Sparta ETL project contains a script and data source
    
 3. **Run the transformation Script**:
    - Execute the **transform_main.py** script to initiate the extraction process.
+     
      ```python transform_main.py```
 
