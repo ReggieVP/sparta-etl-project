@@ -2,7 +2,7 @@
 
 ## Overview
 
-The **extract folder** in the Sparta ETL project contains a script and data sources specifically dedicated to the extraction phase of the ETL process. 
+The **Extract folder** in the Sparta ETL project contains a script and data sources specifically dedicated to the extraction phase of the ETL process. 
 This phase focuses on retrieving raw data from Amazon S3, with a particular emphasis on Sparta data related to courses (data, business, and engineering) and candidate details.
 
 ## The Process:
