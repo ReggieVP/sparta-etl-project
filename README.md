@@ -29,7 +29,7 @@ Ensure you have the following prerequisites installed to run the ETL project suc
    
 - extract_main.py
 - transform_main.py
-- no-name_yet.py
+- load.py
 
 ## ETL Process
 
