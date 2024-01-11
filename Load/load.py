@@ -6,7 +6,7 @@ class Load:
 
     def loading_data_to_sql(self):
         server = 'localhost,1433'
-        database = 'iris1'
+        database = 'Sparta_Final_Project'
         username = 'SA'
         password = 'Coc123-4wegfbdhhdsT*5'
 
