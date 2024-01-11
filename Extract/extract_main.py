@@ -103,7 +103,7 @@ class Extract:
                     json_file = json.load(obj_content['Body'])
                     json_df = pd.json_normalize(json_file)
                     json_df.fillna('na', inplace=True)
-                    json_df.to_csv('talent.csv', index=False)  # Saving JSON data to CSV
+                    #json_df.to_csv('talent.csv', index=False)  # Saving JSON data to CSV
 
                     json_files_df = pd.concat([json_files_df, json_df])
 
@@ -151,8 +151,8 @@ class Extract:
                     txt_df = pd.DataFrame(txt_df.iloc[:, 0].str.split(",").tolist(),
                                           columns=["Name", "Psychometrics", "Presentation"])
                     txt_df.insert(3, "Date", name)
-                    txt_df["Psychometrics"] = txt_df["Psychometrics"].str[15:17]
-                    txt_df["Presentation"] = txt_df["Presentation"].str[15:17]
+                    txt_df["Psychometrics"] = txt_df["Psychometrics"].str.extract(r'(\d+)')
+                    txt_df["Presentation"] = txt_df["Presentation"].str.extract(r'(\d+)')
                     txt_df["Name"] = txt_df["Name"].str.upper().str.title()
                     txt_df["Date"] = txt_df["Date"]
                     txt_df["Date"] = pd.to_datetime(txt_df["Date"])
