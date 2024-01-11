@@ -35,5 +35,5 @@ This phase focuses on retrieving raw data from Amazon S3, with a particular emph
    - Execute the **extract_main.py** script to initiate the extraction process.
    
    ```bash
-   python extract_script.py
+   python extract_main.py
    ```
