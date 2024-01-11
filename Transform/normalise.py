@@ -1,4 +1,4 @@
-from transform_main import Transform
+from Transform.transform_main import Transform
 import pandas as pd
 import numpy as np
 
@@ -179,6 +179,7 @@ class Normalise(Transform):
         merged_df = self.merge_dataframes()
         university = merged_df[["University_ID", "Uni"]].drop_duplicates().sort_values(
             by=["University_ID"]).copy()
+        university = university.dropna()
 
         return university
 
@@ -281,7 +282,7 @@ class Normalise(Transform):
         return student
 
 
-test = Normalise()
-pd.set_option('display.max_columns', None)
+#test = Normalise()
+#pd.set_option('display.max_columns', None)
 
-print(test.precourses())
+#print(test.precourses())
