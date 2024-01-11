@@ -1,5 +1,6 @@
 import datetime as dt
 import re
+import pandas as pd
 from Extract.extract_main import Extract
 
 class Transform(Extract):
@@ -243,13 +244,13 @@ class TransformCSV(Extract):
 
 
 
-pd.set_option("max_colwidth",None)
-pd.set_option('display.max_rows', None)
-pd.set_option('display.max_columns', None)
-pd.set_option('display.width', None)
-
-instance2 = TransformCSV()
-print(instance2.transform_engineering_csvs())
-print(instance2.transform_data_csvs())
-print(instance2.transform_business_csvs())
+# pd.set_option("max_colwidth",None)
+# pd.set_option('display.max_rows', None)
+# pd.set_option('display.max_columns', None)
+# pd.set_option('display.width', None)
+#
+# instance2 = TransformCSV()
+# print(instance2.transform_engineering_csvs())
+# print(instance2.transform_data_csvs())
+# print(instance2.transform_business_csvs())
 
