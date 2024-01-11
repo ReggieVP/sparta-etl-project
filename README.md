@@ -27,8 +27,8 @@ Ensure you have the following prerequisites installed to run the ETL project suc
 
 ### 4. Run the scripts:
    
-- no-name_yet.py
-- no-name_yet.py
+- extract_main.py
+- transform_main.py
 - no-name_yet.py
 
 ## ETL Process
@@ -47,17 +47,17 @@ The ETL process consists of the following steps:
 
 The Data 250 team collaborated on this project using version control (Git) and followed Agile and Scrum best practices for code review, collaboration and documentation.
 
-## Amazing Collaborators
+## Collaborators
 
-- Scrum Master:
-- Product Manager:
-- Name and (GitHub Link)
-- Name and (GitHub Link)
-- Name and (GitHub Link)
-- Name and (GitHub Link)
-- Name and (GitHub Link)
-- Name and (GitHub Link)
-- Name and (GitHub Link)
-- Name and (GitHub Link)
-- Name and (GitHub Link)
-- Name and (GitHub Link)
+- Scrum Master: Sebsatian Manley 
+- Product Manager: Georgia Grayland
+- Anushkriti Sarvesh (GitHub Link)
+- Aymen Shallal (GitHub Link)
+- Jesse Rolfe (GitHub Link)
+- Katsiaryna Graham (GitHub Link)
+- Medan Grant-Anderson and (GitHub Link)
+- Rebecca Hill (GitHub Link)
+- Richard Van Parys (GitHub Link)
+- Richard Elegbe-Williams (GitHub Link)
+- Tolani Oladimeji (GitHub Link)
+- William Watt (GitHub Link)
