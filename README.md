@@ -51,13 +51,13 @@ The Data 250 team collaborated on this project using version control (Git) and f
 
 - Scrum Master: Sebsatian Manley 
 - Product Manager: Georgia Grayland
+- Repository Owner: Richard Van Parys
 - Anushkriti Sarvesh (GitHub Link)
 - Aymen Shallal (GitHub Link)
 - Jesse Rolfe (GitHub Link)
 - Katsiaryna Graham (GitHub Link)
 - Medan Grant-Anderson and (GitHub Link)
 - Rebecca Hill (GitHub Link)
-- Richard Van Parys (GitHub Link)
 - Richard Elegbe-Williams (GitHub Link)
 - Tolani Oladimeji (GitHub Link)
 - William Watt (GitHub Link)
