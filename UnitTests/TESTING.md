@@ -11,10 +11,10 @@
 In both classes there are 6 functions, one for each data file type being extracted and transformed. 
 
 **These Consist of:**
-- Business files
-- Engineering files
-- Data files
-- Applicants
+- Business csv files
+- Engineering csv files
+- Data csv files
+- Applicants csv files
 - JSON files
 - TXT files
 
