@@ -35,11 +35,12 @@ and Amazon S3/Buckets/data-eng-250-final-project/Academy/.
    - Specify the name of the S3 bucket containing the Sparta data in the `data-eng-250-final-project`.
 3. **Import Boto3**
    - First pip install boto3
-      ```bash
+   ```bash
    pip install boto3 pandas
    ```
+   
    - Import boto3
-         ```bash
+   ```bash
    import boto3
    ```
 5. **Run the Extraction Script:**
