@@ -418,49 +418,49 @@ class Load(Normalise):
                 )
             )
 
-            cursor.execute(
-                """
-                 DROP TABLE IF EXISTS weekly_scores;
-
-                 CREATE Table weekly_scores (
-                     weekly_score_id INT PRIMARY KEY,
-                     student_id INT,
-                     metric_id INT,
-                     week_id INT,
-                     score INT,
-                     CONSTRAINT FK_weeklyscore_metric FOREIGN KEY (metric_id) REFERENCES metrics(metric_id),
-                     CONSTRAINT FK_weeklyscore_weeks FOREIGN KEY (week_id) REFERENCES weeks(week_id)
-                 );
-
-                 """
-            )
-
-
-            # Insert Dataframe into SQL Server:
-            for index, row in self.weekly_scores_table().iterrows():
-                cursor.execute(
-                    "INSERT INTO weekly_scores (weekly_score_id,student_id,metric_id,week_id,score) values(?,?,?,?,?)",
-                    row["Weekly_Score_ID"], row["Student_ID"],row['Metric_ID'], row['Week_ID'], row['Score'])
-
-            cursor.execute(
-
-                """
-                DROP TABLE IF EXISTS Tech_self_score;
-
-                CREATE Table Tech_self_score (
-                    tech_score_id INT PRIMARY KEY,
-                    student_id INT,
-                    tech_id INT,
-                    score INT,
-                    CONSTRAINT FK_techscore_tech FOREIGN KEY (tech_id) REFERENCES tech(tech_id)
-                );
-
-                """
-            )
-
-            for index, row in self.tech_score_table().iterrows():
-                cursor.execute("INSERT INTO Tech_self_score (tech_score_id,student_id,tech_id, score) VALUES (?,?, ?, ?)",
-                               row["Tech_Score_ID"],row["Student_ID"], row['Language_ID'], row['Score'])
+            # cursor.execute(
+            #     """
+            #      DROP TABLE IF EXISTS weekly_scores;
+            #
+            #      CREATE Table weekly_scores (
+            #          weekly_score_id INT PRIMARY KEY,
+            #          student_id INT,
+            #          metric_id INT,
+            #          week_id INT,
+            #          score INT,
+            #          CONSTRAINT FK_weeklyscore_metric FOREIGN KEY (metric_id) REFERENCES metrics(metric_id),
+            #          CONSTRAINT FK_weeklyscore_weeks FOREIGN KEY (week_id) REFERENCES weeks(week_id)
+            #      );
+            #
+            #      """
+            # )
+            #
+            #
+            # # Insert Dataframe into SQL Server:
+            # for index, row in self.weekly_scores_table().iterrows():
+            #     cursor.execute(
+            #         "INSERT INTO weekly_scores (weekly_score_id,student_id,metric_id,week_id,score) values(?,?,?,?,?)",
+            #         row["Weekly_Score_ID"], row["Student_ID"],row['Metric_ID'], row['Week_ID'], row['Score'])
+            #
+            # cursor.execute(
+            #
+            #     """
+            #     DROP TABLE IF EXISTS Tech_self_score;
+            #
+            #     CREATE Table Tech_self_score (
+            #         tech_score_id INT PRIMARY KEY,
+            #         student_id INT,
+            #         tech_id INT,
+            #         score INT,
+            #         CONSTRAINT FK_techscore_tech FOREIGN KEY (tech_id) REFERENCES tech(tech_id)
+            #     );
+            #
+            #     """
+            # )
+            #
+            # for index, row in self.tech_score_table().iterrows():
+            #     cursor.execute("INSERT INTO Tech_self_score (tech_score_id,student_id,tech_id, score) VALUES (?,?, ?, ?)",
+            #                    row["Tech_Score_ID"],row["Student_ID"], row['Language_ID'], row['Score'])
 
         cnxn.commit()
         cursor.close()
