@@ -23,6 +23,7 @@ class Normalise(Transform):
 
         merged_df.insert(0, "Student_ID", range(1, 1 + len(merged_df)))
 
+
         merged_df = merged_df.sort_values('Uni')
         merged_df['University_ID'] = (merged_df.groupby(['Uni']).cumcount() == 0).astype(int)
         merged_df['University_ID'] = merged_df['University_ID'].cumsum()
@@ -154,8 +155,11 @@ class Normalise(Transform):
 
     def courses_table(self):
         merged_df = pd.read_csv("words.csv")
-        courses = merged_df[["Course_ID", "Course_Interest", "Trainer_ID"]].drop_duplicates().sort_values(
+        courses = merged_df[["Course_ID", "Trainer_ID","Student_ID"]].drop_duplicates().sort_values(
             by=["Course_ID"]).copy()
+        courses.insert(0, "CoursesTrainer_ID", range(1, 1 + len(courses)))
+
+        courses = courses.dropna()
 
         return courses
 
@@ -182,6 +186,7 @@ class Normalise(Transform):
         address_df = merged_df[["Address_ID", "Student_ID", "Address", "City_ID", "Postcode_ID"]]
         address_df = address_df.drop_duplicates()
         address_df = address_df.sort_values(by='Address_ID')
+        address_df.insert(0, "AddressStudent_ID", range(1, 1 + len(address_df)))
         address_df = address_df.dropna()
 
         return address_df
@@ -212,9 +217,11 @@ class Normalise(Transform):
         merged_df = pd.read_csv("words.csv")
         education = merged_df[["Student_ID", "University_ID", "Grade_ID"]].drop_duplicates().sort_values(
             by=["Student_ID"]).copy()
+        education.insert(0, "Education_ID", range(1, 1 + len(education)))
+
         education = education.dropna()
 
-        return education.astype(int)
+        return education
 
     def talent_team(self):
         merged_df = pd.read_csv("words.csv")
@@ -238,6 +245,13 @@ class Normalise(Transform):
         weeks_df = pd.DataFrame(data=weeks)
 
         return weeks_df
+
+    def cour_table(self):
+        cours = {'Course_ID': [1, 2, 3],
+                 'Course_Interest': ['Business', 'Data', 'Engineering']}
+        cours_df = pd.DataFrame(data=cours)
+
+        return cours_df
 
     def weekly_scores_table(self):
         merged_df = pd.read_csv("words.csv")
@@ -274,6 +288,7 @@ class Normalise(Transform):
         weekly_scores["Score"] = score_list
 
         weekly_scores_df = pd.DataFrame(weekly_scores)
+        weekly_scores_df.insert(0, "Weekly_Score_ID", range(1, 1 + len(weekly_scores_df)))
 
         return weekly_scores_df
 
@@ -286,18 +301,29 @@ class Normalise(Transform):
         precourse = precourse.sort_values(by=["Precourse_ID"])
         return precourse
 
+
     def students(self):
         merged_df = pd.read_csv("words.csv")
+        addresses = self.address_table()
+        education = self.education()
+        course = self.courses_table()
         student = merged_df[
-                ["Student_ID", "Forename", "Lastname", "Dob", "Gender", "Email", "Address_ID", "Phone_Number",
-                 "Self_Development", "Geo_Flex", "Financial_Support_Self", "Course_ID", "Talent_Team_ID",
+                ["Student_ID", "Forename", "Lastname", "Dob", "Gender_ID", "Email", "Phone_Number",
+                 "Self_Development", "Geo_Flex", "Financial_Support_Self", "Talent_Team_ID",
                  "Start_Date"]].drop_duplicates().sort_values(by=["Student_ID"]).copy()
+        student = pd.merge(student, addresses[['Student_ID', 'AddressStudent_ID']], on='Student_ID', how='left')
+        student = pd.merge(student, education[['Student_ID', 'Education_ID']], on='Student_ID', how='left')
+        student = pd.merge(student, course[['Student_ID', 'CoursesTrainer_ID']], on='Student_ID', how='left')
+
+
+
+        #student.insert(7,"AddressStudent_ID",b)
         student = student.dropna()
 
         return student
 
 test=Normalise()
 
-print(test.students())
+print(test.precourses().info())
 
 

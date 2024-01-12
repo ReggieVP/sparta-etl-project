@@ -217,21 +217,38 @@ class Load(Normalise):
         # Commit changes
         cnxn.commit()
 
+        cursor.execute(
+
+            """
+            DROP TABLE IF EXISTS cour;
+
+            CREATE Table cour (
+                course_id INT PRIMARY KEY,
+                course_interest VARCHAR(MAX)
+            );
+            """
+        )
+
+        for index, row in self.cour_table().iterrows():
+            cursor.execute("INSERT INTO cour (course_id, course_interest) VALUES (?, ?)",
+                           row['Course_ID'], row['Course_Interest'])
+
         create_table_query = """
                     DROP TABLE IF EXISTS courses;
 
                     CREATE TABLE courses (
-                        course_id INT PRIMARY KEY,
-                        course VARCHAR(MAX),
+                        coursetrainer_id INT PRIMARY KEY,
+                        course_id INT,
                         trainer_id INT,
-                        CONSTRAINT FK_coursestrainer_trainer FOREIGN KEY (trainer_id) REFERENCES trainer(trainer_id)
+                        CONSTRAINT FK_courses_trainer FOREIGN KEY (trainer_id) REFERENCES trainer(trainer_id)
                     );
                 """
+        cursor.execute(create_table_query)
 
         #Insert Dataframe into SQL Server:
         for index, row in self.courses_table().iterrows():
-            cursor.execute("INSERT INTO courses (course_id, course, trainer_id) VALUES (?, ?, ?)",
-                           row['Course_ID'], row['Course_Interest'], row['Trainer_ID'])
+            cursor.execute("INSERT INTO courses (coursetrainer_id,course_id, trainer_id) VALUES (?, ?, ?)",
+                           (int(row["CoursesTrainer_ID"]),int(row['Course_ID']),int(row['Trainer_ID'])))
 
 
         create_table_query = """
@@ -274,30 +291,32 @@ class Load(Normalise):
             cursor.execute("INSERT INTO student_strengths (student_id, strength_id) values(?,?)",
                            row['Student_ID'], row['Strengths_ID'])
 
-        # cursor.execute(
-        #     """
-        #     DROP TABLE IF EXISTS Education;
-        #
-        #     CREATE Table Education (
-        #         student_id INT,
-        #         university_id INT,
-        #         grade_id INT,
-        #         CONSTRAINT FK_education_university FOREIGN KEY (university_id) REFERENCES university(university_id),
-        #         CONSTRAINT FK_education_universitygrade FOREIGN KEY (grade_id) REFERENCES university_grade(grade_id)
-        #     );
-        #     """
-        # )
-        # # Insert Dataframe into SQL Server:
-        # for index, row in self.education().iterrows():
-        #     cursor.execute("INSERT INTO Education (student_id, university_id ,grade_id) values(?,?,?)",
-        #                    row['Student_ID'], row['University_ID'], row['Grade_ID'])
+        cursor.execute(
+            """
+            DROP TABLE IF EXISTS Education;
+
+            CREATE Table Education (
+                education_id INT PRIMARY KEY,
+                student_id INT,
+                university_id INT,
+                grade_id INT,
+                CONSTRAINT FK_education_university FOREIGN KEY (university_id) REFERENCES university(university_id),
+                CONSTRAINT FK_education_universitygrade FOREIGN KEY (grade_id) REFERENCES university_grade(grade_id)
+            );
+            """
+        )
+        # Insert Dataframe into SQL Server:
+        for index, row in self.education().iterrows():
+            cursor.execute("INSERT INTO Education (education_id, student_id, university_id ,grade_id) values(?,?,?,?)",
+                           int(row["Education_ID"]),int(row['Student_ID']),int(row['University_ID']), int(row['Grade_ID']))
 
         cursor.execute(
             """
                 DROP TABLE IF EXISTS address;
 
                 CREATE TABLE address (
-                    address_id INT,
+                    addressstudent_id INT PRIMARY KEY,
+                    address_id INT ,
                     student_id INT,
                     city_id INT,
                     postcode_id INT,
@@ -307,8 +326,8 @@ class Load(Normalise):
                 """)
 
         for index, row in self.address_table().iterrows():
-            cursor.execute("INSERT INTO address (address_id, student_id, city_id, postcode_id) VALUES (?, ?, ?, ?)",
-                           (row['Address_ID'], row['Student_ID'], row['City_ID'], row['Postcode_ID']))
+            cursor.execute("INSERT INTO address (addressstudent_id,address_id, student_id, city_id, postcode_id) VALUES (?, ?, ?, ?, ?)",
+                           (row["AddressStudent_ID"],row['Address_ID'], row['Student_ID'], row['City_ID'], row['Postcode_ID']))
 
         cursor.execute(
             """
@@ -321,18 +340,18 @@ class Load(Normalise):
             dob DATE,
             gender_id INT,
             email VARCHAR(255),
-            address_id INT,
+            addressstudent_id INT,
             phone_number VARCHAR(50),
             self_development VARCHAR(3),
             geo_flex VARCHAR(3),
             financial_support VARCHAR(3),
-            course_id INT,
+            coursetrainer_id INT,
             talent_team_id INT,
             start_date DATE,
             CONSTRAINT FK_student_gender FOREIGN KEY (gender_id) REFERENCES gender(gender_id),
-            CONSTRAINT FK_student_course FOREIGN KEY (course_id) REFERENCES courses(course_id),
+            CONSTRAINT FK_student_course FOREIGN KEY (coursetrainer_id) REFERENCES courses(coursetrainer_id),
             CONSTRAINT FK_student_talent FOREIGN KEY (talent_team_id) REFERENCES talent_team(talent_team_id),
-            CONSTRAINT FK_student_address FOREIGN KEY (address_id) REFERENCES address(address_id)
+            CONSTRAINT FK_student_address FOREIGN KEY (addressstudent_id) REFERENCES address(addressstudent_id)
         );
 
              """
@@ -340,81 +359,88 @@ class Load(Normalise):
 
         for index, row in self.students().iterrows():
             cursor.execute(
-                "INSERT INTO student (student_id, forename, lastname, dob, gender_ID, email, address_id, phone_number, self_development, geo_flex, financial_support, course_id, talent_team_id, start_date) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
-                (row['Student_ID'], row['Forename'], row['Lastname'], row['Dob'], row['Gender'], row['Email'],
-                 row['Address_ID'], row['Phone_Number'], row['Self_Development'], row['Geo_Flex'],
-                 row['Financial_Support_Self'], row['Course_ID'], row['Talent_Team_ID'], row['Start_Date']))
+                "INSERT INTO student (student_id, forename, lastname, dob, gender_ID, email, addressstudent_id, phone_number, self_development, geo_flex, financial_support, coursetrainer_id, talent_team_id, start_date) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+                (row['Student_ID'], row['Forename'], row['Lastname'], row['Dob'], row['Gender_ID'], row['Email'],
+                 row['AddressStudent_ID'], row['Phone_Number'], row['Self_Development'], row['Geo_Flex'],
+                 row['Financial_Support_Self'], row['CoursesTrainer_ID'], row['Talent_Team_ID'], row['Start_Date']))
+        cnxn.commit()
+        # cursor.execute(
+        #     """
+        #     DROP TABLE IF EXISTS pre_course;
+        #
+        #     CREATE TABLE pre_course (
+        #         precourse_id INT PRIMARY KEY,
+        #         student_id INT,
+        #         psychometric_score INT,
+        #         presentation_score INT,
+        #         course_interest VARCHAR(MAX),
+        #         result VARCHAR(MAX),
+        #         sparta_day_date DATE,
+        #         application_date DATE,
+        #         CONSTRAINT FK_precourse_student FOREIGN KEY (student_id) REFERENCES student(student_id),
+        #     );
+        # """)
+        #
+        # # Execute the SQL command to create the table
+        # cursor.execute(create_table_query)
+        #
+        # for index, row in self.precourses().iterrows():
+        #     cursor.execute(
+        #         "INSERT INTO pre_course (precourse_id,student_id, psychometric_score, presentation_score, course_interest, result, sparta_day_date, application_date) VALUES (?,?, ?, ?, ?, ?, ?, ?)",
+        #         (row["Precourse_ID"],row['Student_ID'], row['Psychometrics(%)'], row['Presentation(%)'],
+        #          row['Course_Interest'], row['Result'], row['Sparta_Day_Date'],
+        #          row['Application_Date']))
+        #
 
-        cursor.execute(
-            """
-            DROP TABLE IF EXISTS pre_course;
-
-            CREATE TABLE pre_course (
-                student_id INT,
-                psychometric_score INT,
-                presentation_score INT,
-                course_interest INT,
-                result VARCHAR(3),
-                sparta_day_date DATE,
-                application_date DATE,
-                CONSTRAINT FK_precourse_student FOREIGN KEY (student_id) REFERENCES student(student_id),
-                CONSTRAINT FK_precourse_courseinterest FOREIGN KEY (course_interest) REFERENCES courses(course_id)
-            );
-        """)
-
-        # Execute the SQL command to create the table
-        cursor.execute(create_table_query)
-
-        for index, row in self.precourses().iterrows():
-            cursor.execute(
-                "INSERT INTO pre_course (student_id, psychometric_score, presentation_score, course_interest, result, sparta_day_date, application_date) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                (row['Student_ID'], row['Psychometrics(%)'], row['Presentation(%)'],
-                 row['Course_Interest'], row['Result'], row['Sparta_Day_Date'],
-                 row['Application_Date']))
 
 
-        cursor.execute(
-            """
-             DROP TABLE IF EXISTS weekly_scores;
+        #
+        # cursor.execute(
+        #     """
+        #      DROP TABLE IF EXISTS weekly_scores;
+        #
+        #      CREATE Table weekly_scores (
+        #          weekly_score_id INT PRIMARY KEY,
+        #          student_id INT,
+        #          metric_id INT,
+        #          week_id INT,
+        #          score INT,
+        #          CONSTRAINT FK_weeklyscore_student FOREIGN KEY (student_id) REFERENCES student(student_id),
+        #          CONSTRAINT FK_weeklyscore_metric FOREIGN KEY (metric_id) REFERENCES metrics(metric_id),
+        #          CONSTRAINT FK_weeklyscore_weeks FOREIGN KEY (week_id) REFERENCES weeks(week_id)
+        #      );
+        #
+        #      """
+        # )
+        #
+        # # Insert Dataframe into SQL Server:
+        # for index, row in self.weekly_scores_table().iterrows():
+        #     cursor.execute(
+        #         "INSERT INTO weekly_scores (weekly_score_id,student_id,metric_id,week_id,score) values(?,?,?,?,?)",
+        #         row["Weekly_Score_ID"],row['Student_ID'], row['Metric_ID'], row['Week_ID'], row['Score'])
+        #
 
-             CREATE Table weekly_scores (
-                 student_id INT,
-                 metric_id INT,
-                 week_id INT,
-                 score INT,
-                 CONSTRAINT FK_weeklyscore_student FOREIGN KEY (student_id) REFERENCES student(student_id),
-                 CONSTRAINT FK_weeklyscore_metric FOREIGN KEY (metric_id) REFERENCES metrics(metric_id),
-                 CONSTRAINT FK_weeklyscore_weeks FOREIGN KEY (week_id) REFERENCES weeks(week_id)
-             );
 
-             """
-        )
 
-        # Insert Dataframe into SQL Server:
-        for index, row in self.weekly_scores_table().iterrows():
-            cursor.execute(
-                "INSERT INTO weekly_scores (weekly_scores_id,student_id,metric_id,week_id,score) values(?,?,?,?)",
-                row['Student_ID'], row['Metric_ID'], row['Week_ID'], row['Score'])
-
-        cursor.execute(
-
-            """
-            DROP TABLE IF EXISTS Tech_self_score;
-
-            CREATE Table Tech_self_score (
-                student_id INT,
-                tech_id INT,
-                score INT,
-                CONSTRAINT FK_techscore_student FOREIGN KEY (student_id) REFERENCES student(student_id),
-                CONSTRAINT FK_techscore_tech FOREIGN KEY (tech_id) REFERENCES tech(tech_id)
-            );
-            """
-        )
-
-        for index, row in self.tech_score_table().iterrows():
-            cursor.execute("INSERT INTO Tech_self_score (student_id, tech_id, score) VALUES (?, ?, ?)",
-                           row['Student_id'], row['Language_ID'], row['Score'])
-
+        # cursor.execute(
+        #
+        #     """
+        #     DROP TABLE IF EXISTS Tech_self_score;
+        #
+        #     CREATE Table Tech_self_score (
+        #         student_id INT,
+        #         tech_id INT,
+        #         score INT,
+        #         CONSTRAINT FK_techscore_student FOREIGN KEY (student_id) REFERENCES student(student_id),
+        #         CONSTRAINT FK_techscore_tech FOREIGN KEY (tech_id) REFERENCES tech(tech_id)
+        #     );
+        #     """
+        # )
+        #
+        # for index, row in self.tech_score_table().iterrows():
+        #     cursor.execute("INSERT INTO Tech_self_score (student_id, tech_id, score) VALUES (?, ?, ?)",
+        #                    row['Student_ID'], row['Language_ID'], row['Score'])
+        #
 
 
 
