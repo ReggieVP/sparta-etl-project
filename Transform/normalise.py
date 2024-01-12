@@ -83,7 +83,7 @@ class Normalise(Transform):
     def weakness_junction_df(self):
         merged_df = pd.read_csv("words.csv")
         weakness_df = self.weakness_table()
-        student_weakness_df = pd.DataFrame(columns=["Student_Id", "Weaknesses_ID"])
+        student_weakness_df = pd.DataFrame(columns=["Student_ID", "Weaknesses_ID"])
         for row in merged_df["Student_ID"]:
             if isinstance(merged_df["Weaknesses"][row - 1], list):
                 word_list = merged_df["Weaknesses"][row - 1]
@@ -112,7 +112,7 @@ class Normalise(Transform):
     def strength_junction_table(self):
         merged_df = pd.read_csv("words.csv")
         strength_df = self.strength_table()
-        student_strength_df = pd.DataFrame(columns=["Student_Id", "Strengths_ID"])
+        student_strength_df = pd.DataFrame(columns=["Student_ID", "Strengths_ID"])
         for row in merged_df["Student_ID"]:
             if isinstance(merged_df["Strengths"][row - 1], list):
                 word_list = merged_df["Strengths"][row - 1]
@@ -135,13 +135,16 @@ class Normalise(Transform):
     def tech_score_table(self):
         merged_df = pd.read_csv("words.csv")
         language_df = self.tech_table()
-        tech_score_df = pd.DataFrame(columns=["Student_Id", "Langauge_ID", "Score"])
+        tech_score_df = pd.DataFrame(columns=["Student_ID", "Language_ID", "Score"])
         for row in merged_df["Student_ID"]:
             for columns in language_df["Language"]:
                 if not np.isnan(merged_df[columns][row - 1]):
                     tech_score_df.loc[len(tech_score_df.index)] = [row, language_df["Language_ID"] \
                         [language_df.index[language_df["Language"] == columns][0]], merged_df[columns][row - 1]]
         tech_score_df = tech_score_df.astype(int)
+        tech_score_df.insert(0, "Tech_Score_ID", range(1, 1 + len(tech_score_df)))
+
+
 
         return tech_score_df
 
@@ -257,7 +260,7 @@ class Normalise(Transform):
         merged_df = pd.read_csv("words.csv")
         metrics_df = self.metrics_table()
         weeks_df = self.weeks_table()
-        subset_weeks = merged_df.iloc[:, [0] + list(range(24, 84))]
+        subset_weeks = merged_df.iloc[:, [1] + list(range(24, 84))]
         weekly_scores = {"Student_ID": [], "Metric_ID": [], "Week_ID": [], "Score": []}
 
         student_id_list = []
@@ -294,11 +297,15 @@ class Normalise(Transform):
 
     def precourses(self):
         merged_df = pd.read_csv("words.csv")
-        precourse = merged_df[["Student_ID", "Psychometrics(%)", "Presentation(%)", "Course_Interest",
+        precourse = merged_df[["Student_ID","Psychometrics(%)", "Presentation(%)", "Course_Interest",
                                "Result", "Sparta_Day_Date", "Application_Date"]].copy()
         precourse.insert(0, "Precourse_ID", range(1, 1 + len(precourse)))
+        precourse["Sparta_Day_Date"] = pd.to_datetime(precourse["Sparta_Day_Date"])
+        precourse["Application_Date"] = pd.to_datetime(precourse["Application_Date"])
+
         precourse = precourse.drop_duplicates()
         precourse = precourse.sort_values(by=["Precourse_ID"])
+        precourse = precourse.dropna()
         return precourse
 
 
@@ -307,23 +314,20 @@ class Normalise(Transform):
         addresses = self.address_table()
         education = self.education()
         course = self.courses_table()
+        precourse = self.precourses()
         student = merged_df[
                 ["Student_ID", "Forename", "Lastname", "Dob", "Gender_ID", "Email", "Phone_Number",
                  "Self_Development", "Geo_Flex", "Financial_Support_Self", "Talent_Team_ID",
                  "Start_Date"]].drop_duplicates().sort_values(by=["Student_ID"]).copy()
-        student = pd.merge(student, addresses[['Student_ID', 'AddressStudent_ID']], on='Student_ID', how='left')
-        student = pd.merge(student, education[['Student_ID', 'Education_ID']], on='Student_ID', how='left')
-        student = pd.merge(student, course[['Student_ID', 'CoursesTrainer_ID']], on='Student_ID', how='left')
-
-
-
-        #student.insert(7,"AddressStudent_ID",b)
-        student = student.dropna()
-
+        student["Start_Date"] = pd.to_datetime(student["Start_Date"])
+        student = pd.merge(student,precourse[['Student_ID','Precourse_ID']],on = 'Student_ID',how = 'left')
+        student = pd.merge(student, addresses[['Student_ID','AddressStudent_ID']], on='Student_ID', how='left')
+        student = pd.merge(student, education[['Student_ID','Education_ID']], on='Student_ID', how='left')
+        student = pd.merge(student, course[['Student_ID','CoursesTrainer_ID']], on='Student_ID', how='left')
         return student
 
 test=Normalise()
 
-print(test.precourses().info())
+print(test.weekly_scores_table())
 
 
