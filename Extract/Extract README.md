@@ -2,12 +2,12 @@
 
 ## Overview
 
-The **extract folder** in the Sparta ETL project contains a script and data sources specifically dedicated to the extraction phase of the ETL process. 
+The **Extract folder** in the Sparta ETL project contains a script and data sources specifically dedicated to the extraction phase of the ETL process. 
 This phase focuses on retrieving raw data from Amazon S3, with a particular emphasis on Sparta data related to courses (data, business, and engineering) and candidate details.
 
 ## The Process:
 
-- The Python code provided in **extract.py** defines a class named Extract designed for an ETL (Extract, Transform, Load) process on data stored in an Amazon S3 bucket. 
+- The Python code provided in **extract_main.py** defines a class named Extract designed for an ETL (Extract, Transform, Load) process on data stored in an Amazon S3 bucket. 
 - The class encapsulates methods for extracting and processing different types of data, including 'Business' data from CSV files, JSON files, 'Applicants' data from CSV files, and text files. 
 - The class utilises the boto3 library for AWS interactions, json for handling JSON data, and pandas for data manipulation. 
 - Each method within the class focuses on a specific data type, with consistent naming conventions for resulting DataFrames. 
@@ -16,7 +16,7 @@ This phase focuses on retrieving raw data from Amazon S3, with a particular emph
 
 ## Contents
 
-1. **extract.py:**
+1. **extract_main.py:**
    - This Python script is responsible for connecting to the specified Amazon S3 bucket and extracting relevant data files.
    - It utilizes the boto3 library for AWS interactions and ensures secure access using AWS credentials.
 
@@ -32,8 +32,8 @@ This phase focuses on retrieving raw data from Amazon S3, with a particular emph
    - Specify the name of the S3 bucket containing the Sparta data in the `data-eng-250-final-project`.
 
 3. **Run the Extraction Script:**
-   - Execute the **extract.py** script to initiate the extraction process.
+   - Execute the **extract_main.py** script to initiate the extraction process.
    
    ```bash
-   python extract_script.py
+   python extract_main.py
    ```
