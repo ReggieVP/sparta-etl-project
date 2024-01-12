@@ -41,7 +41,7 @@ For further information on how to to this, please follow the guidelines here:
 - extract_main.py
 - transform_main.py
 - normalise.py
-- -no-name-yet.py
+- no-name-yet.py
 
 ## ETL Process
 
@@ -66,15 +66,15 @@ The Data 250 team collaborated on this project using version control (Git) and f
 
 ## Collaborators
 
-- Scrum Master: Sebsatian Manley 
-- Product Manager: Georgia Grayland
-- Anushkriti Sarvesh (GitHub Link)
-- Aymen Shallal (GitHub Link)
-- Jesse Rolfe (GitHub Link)
-- Katsiaryna Graham (GitHub Link)
-- Medan Grant-Anderson and (GitHub Link)
-- Rebecca Hill (GitHub Link)
-- Richard Van Parys (GitHub Link)
-- Richard Elegbe-Williams (GitHub Link)
-- Tolani Oladimeji (GitHub Link)
-- William Watt (GitHub Link)
+- Scrum Master: Sebsatian Manley (https://github.com/SebManley)
+- Product Manager: Georgia Grayland (https://github.com/georgiagrayland)
+- Anushkriti Sarvesh (https://github.com/AnushkritiSarvesh)
+- Aymen Shallal (https://github.com/Shalala06)
+- Jesse Rolfe (https://github.com/jvrolfe)
+- Katsiaryna Graham (https://github.com/Katkat10)
+- Medan Grant-Anderson (https://github.com/MedanG-A)
+- Rebecca Hill (https://github.com/beckyhill39)
+- Richard Van Parys (https://github.com/ReggieVP)
+- Richard Elegbe-Williams (https://github.com/87oz)
+- T Oladimeji (https://github.com/T-meji)
+- William Watt (https://github.com/willwatt2002)
