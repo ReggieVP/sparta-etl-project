@@ -1,6 +1,7 @@
 import pandas as pd
 import datetime as dt
 import re
+import pandas as pd
 from Extract.extract_main import Extract
 
 class Transform(Extract):
@@ -168,5 +169,4 @@ class Transform(Extract):
 
 
 pd.set_option('display.max_columns', None)
-
 
