@@ -28,6 +28,7 @@ class Load(Normalise):
 
 
         cursor.execute("""
+                DROP TABLE IF EXISTS trainer
                 CREATE TABLE trainer (
                     trainer_id INT PRIMARY KEY,
                     forename VARCHAR(255),
@@ -41,6 +42,7 @@ class Load(Normalise):
 
 
         create_table_query = """
+            DROP TABLE IF EXISTS weaknesses
             CREATE TABLE weaknesses (
                 weakness_id INT PRIMARY KEY,
                 weakness VARCHAR(MAX)
@@ -51,7 +53,7 @@ class Load(Normalise):
         cursor.execute(create_table_query)
 
         # Commit changes
-        conn.commit()
+        cnxn.commit()
 
         # Insert Dataframe into SQL Server:
         for index, row in self.weakness_table().iterrows():
@@ -66,7 +68,7 @@ class Load(Normalise):
 
              CREATE Table strengths (
                  strength_id INT PRIMARY KEY,
-                 strength VARCHAR
+                 strength VARCHAR(MAX)
              );
 
              """
@@ -75,7 +77,7 @@ class Load(Normalise):
         # Insert Dataframe into SQL Server:
         for index, row in self.strength_table().iterrows():
             cursor.execute("INSERT INTO strengths (strength_id, strength) values(?,?)",
-                           row['Strength_ID'], row['Strength'])
+                           row['Strengths_ID'], row['Strengths'])
 
         cursor.execute(
             """
@@ -83,7 +85,7 @@ class Load(Normalise):
 
              CREATE Table metrics (
                  metric_id INT PRIMARY KEY,
-                 metric VARCHAR 
+                 metric VARCHAR(MAX)
              );
 
              """
@@ -100,7 +102,7 @@ class Load(Normalise):
 
              CREATE Table weeks (
                  week_id INT PRIMARY KEY,
-                 week_number INT
+                 week_number VARCHAR(3)
              );
 
              """
@@ -157,6 +159,8 @@ class Load(Normalise):
                            row['Language_ID'], row['Language'])
 
         cursor.execute("""
+                DROP TABLE IF EXISTS city;
+
                 CREATE TABLE city (
                     city_id INT PRIMARY KEY,
                     city VARCHAR(255)
@@ -168,6 +172,8 @@ class Load(Normalise):
                            (row['City_ID'], row['City']))
 
         cursor.execute("""
+                DROP TABLE IF EXISTS postcode;
+
                 CREATE TABLE postcode (
                     postcode_id INT PRIMARY KEY,
                     postcode VARCHAR(255)
@@ -179,6 +185,8 @@ class Load(Normalise):
                            (row['Postcode_ID'], row['Postcode']))
 
         cursor.execute("""
+                DROP TABLE IF EXISTS talent_team;
+
                 CREATE TABLE talent_team (
                     talent_team_id INT PRIMARY KEY,
                     forename VARCHAR(255),
@@ -191,6 +199,8 @@ class Load(Normalise):
                            (row['Talent_Team_ID'], row['Talent_Forename'], row['Talent_Lastname']))
 
         cursor.execute("""
+                DROP TABLE IF EXISTS gender;
+
                 CREATE TABLE gender (
                     gender_id INT PRIMARY KEY,
                     gender VARCHAR(255)
@@ -205,21 +215,26 @@ class Load(Normalise):
         cursor.execute(create_table_query)
 
         # Commit changes
+
         conn.commit()
 
+
         create_table_query = """
+                    DROP TABLE IF EXISTS courses;
+
                     CREATE TABLE courses (
                         course_id INT PRIMARY KEY,
                         course VARCHAR(MAX),
                         trainer_id INT,
-                        CONSTRAINT FK_courses_trainer FOREIGN KEY (trainer_id) REFERENCES trainer(trainer_id)
+                        CONSTRAINT FK_coursestrainer_trainer FOREIGN KEY (trainer_id) REFERENCES trainer(trainer_id)
                     );
                 """
 
-        # Insert Dataframe into SQL Server:
+        #Insert Dataframe into SQL Server:
+
         for index, row in self.courses_table().iterrows():
             cursor.execute("INSERT INTO courses (course_id, course, trainer_id) VALUES (?, ?, ?)",
-                           row['Course_ID'], row['Course'], row['Trainer_ID'])
+                           row['Course_ID'], row['Course_Interest'], row['Trainer_ID'])
 
 
         create_table_query = """
@@ -262,9 +277,28 @@ class Load(Normalise):
             cursor.execute("INSERT INTO student_strengths (student_id, strength_id) values(?,?)",
                            row['Student_ID'], row['Strengths_ID'])
 
+        # cursor.execute(
+        #     """
+        #     DROP TABLE IF EXISTS Education;
+        #
+        #     CREATE Table Education (
+        #         student_id INT,
+        #         university_id INT,
+        #         grade_id INT,
+        #         CONSTRAINT FK_education_university FOREIGN KEY (university_id) REFERENCES university(university_id),
+        #         CONSTRAINT FK_education_universitygrade FOREIGN KEY (grade_id) REFERENCES university_grade(grade_id)
+        #     );
+        #     """
+        # )
+        # # Insert Dataframe into SQL Server:
+        # for index, row in self.education().iterrows():
+        #     cursor.execute("INSERT INTO Education (student_id, university_id ,grade_id) values(?,?,?)",
+        #                    row['Student_ID'], row['University_ID'], row['Grade_ID'])
+
+
         cursor.execute(
             """
-            DROP TABLE IF EXISTS Education;
+                DROP TABLE IF EXISTS address;
 
             CREATE Table Education (
                 student_id INT,
@@ -281,23 +315,26 @@ class Load(Normalise):
                            row['Student_ID'], row['University_ID'], row['Grade_ID'])
 
         cursor.execute("""
+
                 CREATE TABLE address (
                     address_id INT,
                     student_id INT,
                     city_id INT,
-                    postcode VARCHAR(255),
+                    postcode_id INT,
                     CONSTRAINT FK_address_city FOREIGN KEY (city_id) REFERENCES city(city_id),
                     CONSTRAINT FK_address_postcode FOREIGN KEY (postcode_id) REFERENCES postcode(postcode_id)
                 );
                 """)
 
         for index, row in self.address_table().iterrows():
-            cursor.execute("INSERT INTO address (address_id, student_id, city_id, postcode) VALUES (?, ?, ?, ?)",
+
+          cursor.execute("INSERT INTO address (address_id, student_id, city_id, postcode_id) VALUES (?, ?, ?, ?)",
+
                            (row['Address_ID'], row['Student_ID'], row['City_ID'], row['Postcode_ID']))
 
         cursor.execute(
             """
-             DROP TABLE IF EXISTS student;
+            DROP TABLE IF EXISTS student;
 
             CREATE TABLE student (
             student_id INT PRIMARY KEY,
@@ -308,9 +345,9 @@ class Load(Normalise):
             email VARCHAR(255),
             address_id INT,
             phone_number VARCHAR(50),
-            self_development BOOLEAN,
-            geo_flex BOOLEAN,
-            financial_support BOOLEAN,
+            self_development VARCHAR(3),
+            geo_flex VARCHAR(3),
+            financial_support VARCHAR(3),
             course_id INT,
             talent_team_id INT,
             start_date DATE,
@@ -330,13 +367,17 @@ class Load(Normalise):
                  row['Address_ID'], row['Phone_Number'], row['Self_Development'], row['Geo_Flex'],
                  row['Financial_Support_Self'], row['Course_ID'], row['Talent_Team_ID'], row['Start_Date']))
 
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS pre_course (
+        cursor.execute(
+            """
+            DROP TABLE IF EXISTS pre_course;
+
+            CREATE TABLE pre_course (
+
                 student_id INT,
                 psychometric_score INT,
                 presentation_score INT,
                 course_interest INT,
-                result BOOLEAN,
+                result VARCHAR(3),
                 sparta_day_date DATE,
                 application_date DATE,
                 CONSTRAINT FK_precourse_student FOREIGN KEY (student_id) REFERENCES student(student_id),

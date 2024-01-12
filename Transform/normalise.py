@@ -47,8 +47,8 @@ class Normalise(Transform):
         merged_df['Address_ID'] = (merged_df.groupby(['Address']).cumcount() == 0).astype(int)
         merged_df['Address_ID'] = merged_df['Address_ID'].cumsum()
 
-        merged_df = merged_df.sort_values('Course')
-        merged_df['Course_ID'] = (merged_df.groupby(['Course']).cumcount() == 0).astype(int)
+        merged_df = merged_df.sort_values('Course_Interest')
+        merged_df['Course_ID'] = (merged_df.groupby(['Course_Interest']).cumcount() == 0).astype(int)
         merged_df['Course_ID'] = merged_df['Course_ID'].cumsum()
 
         merged_df = merged_df.sort_values(['Talent_Forename', 'Talent_Lastname'])
@@ -64,7 +64,7 @@ class Normalise(Transform):
         return merged_df
 
     def weakness_table(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         weakness_df = pd.DataFrame(columns=['Weaknesses_ID', 'Weaknesses'])
         # Appending each weakness to a list, ignoring NaN values
         weakness_list = []
@@ -80,7 +80,7 @@ class Normalise(Transform):
         return weakness_df
 
     def weakness_junction_df(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         weakness_df = self.weakness_table()
         student_weakness_df = pd.DataFrame(columns=["Student_Id", "Weaknesses_ID"])
         for row in merged_df["Student_ID"]:
@@ -93,7 +93,7 @@ class Normalise(Transform):
         return student_weakness_df
 
     def strength_table(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         strength_df = pd.DataFrame(columns=['Strengths_ID', 'Strengths'])
         # Appending each weakness to a list, ignoring NaN values
         strength_list = []
@@ -109,7 +109,7 @@ class Normalise(Transform):
         return strength_df
 
     def strength_junction_table(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         strength_df = self.strength_table()
         student_strength_df = pd.DataFrame(columns=["Student_Id", "Strengths_ID"])
         for row in merged_df["Student_ID"]:
@@ -122,7 +122,7 @@ class Normalise(Transform):
         return student_strength_df
 
     def tech_table(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         selected_columns = ['C#', 'Java', 'R', 'Javascript', 'Python', 'C++', 'Ruby', 'SPSS', 'PHP']
         cols = {'Language_ID': [1, 2, 3, 4, 5, 6, 7, 8, 9],
                 'Language': merged_df[selected_columns].columns.tolist()}
@@ -132,7 +132,7 @@ class Normalise(Transform):
         return language_df
 
     def tech_score_table(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         language_df = self.tech_table()
         tech_score_df = pd.DataFrame(columns=["Student_Id", "Langauge_ID", "Score"])
         for row in merged_df["Student_ID"]:
@@ -145,21 +145,22 @@ class Normalise(Transform):
         return tech_score_df
 
     def trainers_table(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         trainers = merged_df[["Trainer_ID", "Trainer_Forename", "Trainer_Lastname"]].drop_duplicates().sort_values(
             by=["Trainer_ID"]).copy()
+        trainers = trainers.dropna()
 
         return trainers
 
     def courses_table(self):
-        merged_df = self.merge_dataframes()
-        courses = merged_df[["Course_ID", "Course", "Trainer_ID"]].drop_duplicates().sort_values(
+        merged_df = pd.read_csv("words.csv")
+        courses = merged_df[["Course_ID", "Course_Interest", "Trainer_ID"]].drop_duplicates().sort_values(
             by=["Course_ID"]).copy()
 
         return courses
 
     def city_table(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         city_df = merged_df[['City_ID', 'City']].copy()
         city_df = city_df.drop_duplicates()
         city_df = city_df.sort_values(by='City_ID')
@@ -168,7 +169,7 @@ class Normalise(Transform):
         return city_df
 
     def postcode_table(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         postcode_df = merged_df[['Postcode_ID', 'Postcode']].copy()
         postcode_df = postcode_df.drop_duplicates()
         postcode_df = postcode_df.sort_values(by='Postcode_ID')
@@ -177,7 +178,7 @@ class Normalise(Transform):
         return postcode_df
 
     def address_table(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         address_df = merged_df[["Address_ID", "Student_ID", "Address", "City_ID", "Postcode_ID"]]
         address_df = address_df.drop_duplicates()
         address_df = address_df.sort_values(by='Address_ID')
@@ -186,7 +187,7 @@ class Normalise(Transform):
         return address_df
 
     def university_table(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         university = merged_df[["University_ID", "Uni"]].drop_duplicates().sort_values(
             by=["University_ID"]).copy()
         university = university.dropna()
@@ -194,29 +195,29 @@ class Normalise(Transform):
         return university
 
     def grade_table(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         grades = merged_df[["Grade_ID", "Degree"]].drop_duplicates().sort_values(by=["Grade_ID"]).copy()
         grades = grades.dropna()
 
         return grades
 
     def gender_table(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         gender = merged_df[["Gender_ID", "Gender"]].drop_duplicates().sort_values(by=["Gender_ID"]).copy()
         gender = gender.dropna()
 
         return gender
 
     def education(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         education = merged_df[["Student_ID", "University_ID", "Grade_ID"]].drop_duplicates().sort_values(
             by=["Student_ID"]).copy()
         education = education.dropna()
 
-        return education
+        return education.astype(int)
 
     def talent_team(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         talent_team = merged_df[
             ["Talent_Team_ID", "Talent_Forename", "Talent_Lastname"]].drop_duplicates().sort_values(
             by=["Talent_Team_ID"]).copy()
@@ -239,7 +240,7 @@ class Normalise(Transform):
         return weeks_df
 
     def weekly_scores_table(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         metrics_df = self.metrics_table()
         weeks_df = self.weeks_table()
         subset_weeks = merged_df.iloc[:, [0] + list(range(24, 84))]
@@ -277,7 +278,7 @@ class Normalise(Transform):
         return weekly_scores_df
 
     def precourses(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         precourse = merged_df[["Student_ID", "Psychometrics(%)", "Presentation(%)", "Course_Interest",
                                "Result", "Sparta_Day_Date", "Application_Date"]].copy()
         precourse.insert(0, "Precourse_ID", range(1, 1 + len(precourse)))
@@ -286,7 +287,7 @@ class Normalise(Transform):
         return precourse
 
     def students(self):
-        merged_df = self.merge_dataframes()
+        merged_df = pd.read_csv("words.csv")
         student = merged_df[
                 ["Student_ID", "Forename", "Lastname", "Dob", "Gender", "Email", "Address_ID", "Phone_Number",
                  "Self_Development", "Geo_Flex", "Financial_Support_Self", "Course_ID", "Talent_Team_ID",
@@ -295,7 +296,8 @@ class Normalise(Transform):
 
         return student
 
-#test = Normalise()
-#pd.set_option('display.max_columns', None)
+test=Normalise()
 
-#print(test.precourses())
+print(test.students())
+
+
